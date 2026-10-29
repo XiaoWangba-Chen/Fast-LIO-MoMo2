@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="21" failures="0" disabled="0" errors="0" time="0.009" timestamp="2026-10-29T16:47:53" name="AllTests">
+  <testsuite name="Routing" tests="1" failures="0" disabled="0" errors="0" time="0" timestamp="2026-10-29T16:47:53">
+    <testcase name="RejectsAmbiguousMode" status="run" result="completed" time="0" timestamp="2026-10-29T16:47:53" classname="fast_lio.Routing" />
+  </testsuite>
+  <testsuite name="Degeneracy" tests="4" failures="0" disabled="0" errors="0" time="0" timestamp="2026-10-29T16:47:53">
+    <testcase name="FindsPlanarNullspaceAndHysteresis" status="run" result="completed" time="0" timestamp="2026-10-29T16:47:53" classname="fast_lio.Degeneracy" />
+    <testcase name="CompensationNeverAddsInformation" status="run" result="completed" time="0" timestamp="2026-10-29T16:47:53" classname="fast_lio.Degeneracy" />
+    <testcase name="SeparatesInsufficientAndResidual" status="run" result="completed" time="0" timestamp="2026-10-29T16:47:53" classname="fast_lio.Degeneracy" />
+    <testcase name="MapProtectionRecoversWithValidButWeakGeometry" status="run" result="completed" time="0" timestamp="2026-10-29T16:47:53" classname="fast_lio.Degeneracy" />
+  </testsuite>
+  <testsuite name="Propagation" tests="3" failures="0" disabled="0" errors="0" time="0.004" timestamp="2026-10-29T16:47:53">
+    <testcase name="StationaryAndReplayAgree" status="run" result="completed" time="0.002" timestamp="2026-10-29T16:47:53" classname="fast_lio.Propagation" />
+    <testcase name="GapStopsUntilFreshAnchor" status="run" result="completed" time="0" timestamp="2026-10-29T16:47:53" classname="fast_lio.Propagation" />
+    <testcase name="ConstantAccelerationAndRotation" status="run" result="completed" time="0.002" timestamp="2026-10-29T16:47:53" classname="fast_lio.Propagation" />
+  </testsuite>
+  <testsuite name="Geodesy" tests="3" failures="0" disabled="0" errors="0" time="0" timestamp="2026-10-29T16:47:53">
+    <testcase name="OriginAndEastMotion" status="run" result="completed" time="0" timestamp="2026-10-29T16:47:53" classname="fast_lio.Geodesy" />
+    <testcase name="AlignmentWaitsForObservableHeading" status="run" result="completed" time="0" timestamp="2026-10-29T16:47:53" classname="fast_lio.Geodesy" />
+    <testcase name="AlignmentRespectsTiltedWorldGravity" status="run" result="completed" time="0" timestamp="2026-10-29T16:47:53" classname="fast_lio.Geodesy" />
+  </testsuite>
+  <testsuite name="Observations" tests="2" failures="0" disabled="0" errors="0" time="0" timestamp="2026-10-29T16:47:53">
+    <testcase name="WheelJacobianWithLeverArm" status="run" result="completed" time="0" timestamp="2026-10-29T16:47:53" classname="fast_lio.Observations" />
+    <testcase name="GnssJacobianWithLeverArm" status="run" result="completed" time="0" timestamp="2026-10-29T16:47:53" classname="fast_lio.Observations" />
+  </testsuite>
+  <testsuite name="CloneFilter" tests="4" failures="0" disabled="0" errors="0" time="0.001" timestamp="2026-10-29T16:47:53">
+    <testcase name="CrossCovarianceAndMarginalization" status="run" result="completed" time="0" timestamp="2026-10-29T16:47:53" classname="fast_lio.CloneFilter" />
+    <testcase name="VelocityUpdateUsesFullStateAndRejectsSlip" status="run" result="completed" time="0" timestamp="2026-10-29T16:47:53" classname="fast_lio.CloneFilter" />
+    <testcase name="CompletedTrackConsumedOnceAndBounded" status="run" result="completed" time="0" timestamp="2026-10-29T16:47:53" classname="fast_lio.CloneFilter" />
+    <testcase name="CompressedUpdateMatchesDense" status="run" result="completed" time="0.001" timestamp="2026-10-29T16:47:53" classname="fast_lio.CloneFilter" />
+  </testsuite>
+  <testsuite name="Stereo" tests="2" failures="0" disabled="0" errors="0" time="0.004" timestamp="2026-10-29T16:47:53">
+    <testcase name="BlankFramesFailGracefully" status="run" result="completed" time="0.001" timestamp="2026-10-29T16:47:53" classname="fast_lio.Stereo" />
+    <testcase name="TracksRectifiedImages" status="run" result="completed" time="0.003" timestamp="2026-10-29T16:47:53" classname="fast_lio.Stereo" />
+  </testsuite>
+  <testsuite name="ScanTime" tests="2" failures="0" disabled="0" errors="0" time="0" timestamp="2026-10-29T16:47:53">
+    <testcase name="OverlappingScanKeepsNewPointsAndAbsoluteTimes" status="run" result="completed" time="0" timestamp="2026-10-29T16:47:53" classname="fast_lio.ScanTime" />
+    <testcase name="FullyStaleScanIsRejected" status="run" result="completed" time="0" timestamp="2026-10-29T16:47:53" classname="fast_lio.ScanTime" />
+  </testsuite>
+</testsuites>

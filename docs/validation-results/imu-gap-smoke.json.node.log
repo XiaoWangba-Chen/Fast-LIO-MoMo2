@@ -1,0 +1,11 @@
+Multi thread started
+p_pre->lidar_type 2
+~~~~/home/cxt/SB/FAST_LIO/ file opened
+[INFO] [1793263994.094557768] [fast_lio]: IMU Initial Done
+[WARN] [1793263997.304320563] [fastlio_mapping]: IMU gap
+[WARN] [1793263997.316055960] [fastlio_mapping]: Estimator session reset after time discontinuity or IMU gap
+Rebuild thread terminated normally
+Multi thread started
+[INFO] [1793263997.594523482] [fast_lio]: IMU Initial Done
+[INFO] [1793264000.931593098] [fastlio_mapping]: LiDAR frames received: 61
+Rebuild thread terminated normally

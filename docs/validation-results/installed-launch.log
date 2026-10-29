@@ -1,0 +1,11 @@
+[INFO] [launch]: All log files can be found below /home/cxt/.ros/log/2026-10-29-16-55-20-453323-cxt-ASUS-TUF-Gaming-F16-FX607JV-FX607JV-74369
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [fastlio_mapping-1]: process started with pid [74370]
+[fastlio_mapping-1] Multi thread started
+[fastlio_mapping-1] p_pre->lidar_type 3
+[fastlio_mapping-1] ~~~~/home/cxt/SB/FAST_LIO/ file opened
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[INFO] [fastlio_mapping-1]: sending signal 'SIGINT' to process[fastlio_mapping-1]
+[fastlio_mapping-1] [INFO] [1793264124.143044237] [fastlio_mapping]: LiDAR frames received: 0
+[fastlio_mapping-1] Rebuild thread terminated normally
+[INFO] [fastlio_mapping-1]: process has finished cleanly [pid 74370]

@@ -1,0 +1,21 @@
+
+7-Zip [64] 16.02 : Copyright (c) 1999-2016 Igor Pavlov : 2016-05-21
+p7zip Version 16.02 (locale=C.UTF-8,Utf16=on,HugeFiles=on,64 bits,20 CPUs 13th Gen Intel(R) Core(TM) i7-13650HX (B0671),ASM,AES-NI)
+
+Scanning the drive for archives:
+1 file, 4063287652 bytes (3876 MiB)
+
+Extracting archive: data/fusionportable_v2/ugv_parking00_rosbag.7z
+--
+Path = data/fusionportable_v2/ugv_parking00_rosbag.7z
+Type = 7z
+Physical Size = 4063287652
+Headers Size = 170
+Method = LZMA2:24
+Solid = -
+Blocks = 1
+
+Everything is Ok
+
+Size:       15622861399
+Compressed: 4063287652

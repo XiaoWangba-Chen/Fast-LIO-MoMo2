@@ -1,0 +1,93 @@
+{
+  "streams": {
+    "/odometry/local": {
+      "messages": 599,
+      "start": 1686284028.1539989,
+      "end": 1686284087.950617,
+      "duration_s": 59.79661822319031,
+      "backwards": 0,
+      "same_epoch_revisions": 0,
+      "median_rate_hz": 9.986473761215814,
+      "max_interval_s": 0.10764932632446289
+    },
+    "/odometry/imu": {
+      "messages": 11938,
+      "start": 1686284028.2475522,
+      "end": 1686284087.987538,
+      "duration_s": 59.739985942840576,
+      "backwards": 0,
+      "same_epoch_revisions": 0,
+      "median_rate_hz": 199.99542246805265,
+      "max_interval_s": 0.06372404098510742
+    }
+  },
+  "diagnostics_samples": 598,
+  "processing_ms": {
+    "p50": 36.026503,
+    "p95": 46.261715499999994,
+    "maximum": 139.661813,
+    "last": 43.616768,
+    "tail_mean": 38.233266449999995
+  },
+  "state_lag_ms": {
+    "p50": 43.223738999999995,
+    "p95": 55.8136224,
+    "maximum": 164.166927,
+    "last": 35.325527,
+    "tail_mean": 42.69688135
+  },
+  "lidar_queue": {
+    "p50": 0.0,
+    "p95": 0.0,
+    "maximum": 0.0,
+    "last": 0.0,
+    "tail_mean": 0.0
+  },
+  "imu_queue": {
+    "p50": 1.0,
+    "p95": 3.0,
+    "maximum": 14.0,
+    "last": 1.0,
+    "tail_mean": 1.45
+  },
+  "aux_queue": {
+    "p50": 0.0,
+    "p95": 0.0,
+    "maximum": 0.0,
+    "last": 0.0,
+    "tail_mean": 0.0
+  },
+  "final_counters": {
+    "session": "0",
+    "stereo.updates": "0",
+    "stereo.features": "0",
+    "degeneracy.reason": "0",
+    "degeneracy.severe": "0",
+    "degeneracy.degraded": "0",
+    "weak_dimensions": "0",
+    "match_ratio": "0.802479",
+    "residual": "0.018065",
+    "lidar_queue": "0",
+    "imu_queue": "1",
+    "processing_ms": "43.616768",
+    "imu_gap_count": "0",
+    "wheel.accepted": "0",
+    "wheel.rejected": "0",
+    "wheel.late": "0",
+    "wheel.overflow": "0",
+    "gnss.accepted": "0",
+    "gnss.rejected": "0",
+    "gnss.late": "0",
+    "gnss.overflow": "0",
+    "stereo.accepted": "0",
+    "stereo.rejected": "0",
+    "stereo.late": "0",
+    "stereo.overflow": "0",
+    "imu.invalid": "0",
+    "aux_queue": "0",
+    "state_lag_ms": "35.325527"
+  },
+  "severe_lidar_samples": 5,
+  "geometrically_degraded_samples": 0,
+  "no_sustained_backlog": true
+}

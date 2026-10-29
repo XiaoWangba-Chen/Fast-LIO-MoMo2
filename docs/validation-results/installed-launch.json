@@ -1,0 +1,8 @@
+{
+  "nodes": [
+    "/fastlio_io",
+    "/fastlio_mapping"
+  ],
+  "startup_exit": null,
+  "passed": true
+}

@@ -1,0 +1,7 @@
+Multi thread started
+p_pre->lidar_type 2
+~~~~/home/cxt/SB/FAST_LIO/ file opened
+[INFO] [1793264012.315133547] [fast_lio]: IMU Initial Done
+[WARN] [1793264013.609845756] [fastlio_mapping]: Rejecting non-finite IMU sample
+[INFO] [1793264019.149389328] [fastlio_mapping]: LiDAR frames received: 61
+Rebuild thread terminated normally

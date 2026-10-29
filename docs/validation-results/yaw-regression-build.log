@@ -1,0 +1,7 @@
+[ 14%] Built target gtest_main
+[ 57%] Built target fastlio_core
+[ 71%] Built target fastlio_backend
+[ 85%] Built target gtest
+[ 92%] Building CXX object CMakeFiles/test_backend.dir/tests/test_backend.cpp.o
+[100%] Linking CXX executable test_backend
+[100%] Built target test_backend

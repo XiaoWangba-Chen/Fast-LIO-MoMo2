@@ -1,0 +1,15 @@
+
+Files:             normalized_60s.db3
+Bag size:          3.4 GiB
+Storage id:        sqlite3
+Duration:          59.993599892s
+Start:             Jun  9 2023 12:13:47.995753765 (1686284027.995753765)
+End:               Jun  9 2023 12:14:47.989353657 (1686284087.989353657)
+Messages:          22783
+Topic information: Topic: /camera/left/camera_info | Type: sensor_msgs/msg/CameraInfo | Count: 1201 | Serialization Format: cdr
+                   Topic: /camera/right/camera_info | Type: sensor_msgs/msg/CameraInfo | Count: 1201 | Serialization Format: cdr
+                   Topic: /wheel/twist | Type: geometry_msgs/msg/TwistWithCovarianceStamped | Count: 5380 | Serialization Format: cdr
+                   Topic: /imu/data | Type: sensor_msgs/msg/Imu | Count: 11999 | Serialization Format: cdr
+                   Topic: /points_raw | Type: sensor_msgs/msg/PointCloud2 | Count: 600 | Serialization Format: cdr
+                   Topic: /camera/left/image_raw | Type: sensor_msgs/msg/Image | Count: 1201 | Serialization Format: cdr
+                   Topic: /camera/right/image_raw | Type: sensor_msgs/msg/Image | Count: 1201 | Serialization Format: cdr

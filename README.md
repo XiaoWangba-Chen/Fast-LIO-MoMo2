@@ -1,3 +1,25 @@
+# FAST-LIO2 ROS2 多传感器扩展
+
+当前分支面向 **ROS2 Humble / C++17**，提供退化检测与补偿、轮速/GNSS/原始双目融合、iSAM2 位姿图及回环、独立 IMU 高频递推和地图导出。
+
+- 三类辅助观测通过 `fusion.mode: frontend | backend` 统一选边，避免原始观测重复融合。
+- 后端只校正 `map→odom`，本地高频里程计保持独立。
+- 构建默认单任务、低优先级；支持 CPU/内存资源上限，避免影响桌面。
+
+```bash
+source /opt/ros/humble/setup.bash
+./scripts/bootstrap.sh
+./scripts/build.sh
+source install/setup.bash
+ros2 launch fast_lio slam.launch.py
+```
+
+标定、输入格式和运行方式见 [运行说明](docs/RUNNING.md)；算法与近似边界见 [实现说明](docs/ARCHITECTURE.md)；真实数据准备与转换见 [数据集说明](docs/DATASETS.md)；实际测试结果见 [验收记录](docs/VALIDATION.md)。辅助传感器默认关闭，标定模板中的单位外参不能替代真实标定。
+
+以下保留上游论文、作者与 ROS1 使用说明作为历史参考；当前分支请使用上面的 ROS2 文档。
+
+---
+
 ## Related Works and Extended Application
 
 **SLAM:**

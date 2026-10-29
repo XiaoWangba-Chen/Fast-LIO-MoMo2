@@ -1,0 +1,90 @@
+{
+  "streams": {
+    "/odometry/local": {
+      "messages": 345,
+      "start": 1686284028.453734,
+      "end": 1686284087.8501973,
+      "duration_s": 59.39646339416504,
+      "backwards": 0,
+      "same_epoch_revisions": 0,
+      "median_rate_hz": 5.084343804738498,
+      "max_interval_s": 0.3009159564971924
+    },
+    "/odometry/imu": {
+      "messages": 11904,
+      "start": 1686284028.4724948,
+      "end": 1686284087.987538,
+      "duration_s": 59.51504325866699,
+      "backwards": 0,
+      "same_epoch_revisions": 0,
+      "median_rate_hz": 199.99542246805265,
+      "max_interval_s": 0.012667655944824219
+    }
+  },
+  "diagnostics_samples": 344,
+  "processing_ms": {
+    "p50": 55.0442195,
+    "p95": 63.7502633,
+    "maximum": 101.677088,
+    "last": 64.63447,
+    "tail_mean": 50.01798369999999
+  },
+  "state_lag_ms": {
+    "p50": 58.7297675,
+    "p95": 146.83328905000002,
+    "maximum": 151.875734,
+    "last": 69.219828,
+    "tail_mean": 82.06478360000001
+  },
+  "lidar_queue": {
+    "p50": 0.0,
+    "p95": 0.0,
+    "maximum": 0.0,
+    "last": 0.0,
+    "tail_mean": 0.0
+  },
+  "imu_queue": {
+    "p50": 1.0,
+    "p95": 61.0,
+    "maximum": 152.0,
+    "last": 1.0,
+    "tail_mean": 22.05
+  },
+  "aux_queue": {
+    "p50": 0.0,
+    "p95": 0.0,
+    "maximum": 0.0,
+    "last": 0.0,
+    "tail_mean": 0.0
+  },
+  "final_counters": {
+    "session": "0",
+    "degeneracy.reason": "0",
+    "degeneracy.severe": "0",
+    "degeneracy.degraded": "0",
+    "weak_dimensions": "0",
+    "match_ratio": "0.000000",
+    "residual": "0.000000",
+    "lidar_queue": "0",
+    "imu_queue": "1",
+    "processing_ms": "64.634470",
+    "imu_gap_count": "0",
+    "wheel.accepted": "0",
+    "wheel.rejected": "0",
+    "wheel.late": "0",
+    "wheel.overflow": "0",
+    "gnss.accepted": "0",
+    "gnss.rejected": "0",
+    "gnss.late": "0",
+    "gnss.overflow": "0",
+    "stereo.accepted": "0",
+    "stereo.rejected": "0",
+    "stereo.late": "0",
+    "stereo.overflow": "0",
+    "aux_queue": "0",
+    "state_lag_ms": "69.219828"
+  },
+  "severe_lidar_samples": 0,
+  "geometrically_degraded_samples": 0,
+  "no_sustained_backlog": true
+}

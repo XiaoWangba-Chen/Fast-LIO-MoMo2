@@ -1,0 +1,7 @@
+/**:
+  ros__parameters:
+    backend.enabled: false
+    degeneracy.enabled: false
+    wheel.enabled: false
+    gnss.enabled: false
+    stereo.enabled: false

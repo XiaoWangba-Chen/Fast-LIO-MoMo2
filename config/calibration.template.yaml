@@ -1,0 +1,18 @@
+# Replace identity values using YOUR dataset calibration before enabling sensors.
+# Every imu_T_sensor maps coordinates from sensor into the IMU frame.
+/**:
+  ros__parameters:
+    extrinsics:
+      imu_T_base:
+        translation: [0.0, 0.0, 0.0]
+        quaternion: [0.0, 0.0, 0.0, 1.0]
+      imu_T_camera:
+        translation: [0.0, 0.0, 0.0]
+        quaternion: [0.0, 0.0, 0.0, 1.0]
+      imu_T_gnss:
+        translation: [0.0, 0.0, 0.0]
+        quaternion: [0.0, 0.0, 0.0, 1.0]
+    wheel.time_offset: 0.0
+    gnss.time_offset: 0.0
+    stereo.left_time_offset: 0.0
+    stereo.right_time_offset: 0.0

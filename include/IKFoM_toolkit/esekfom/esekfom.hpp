@@ -1,3 +1,4 @@
+#include <functional>
 /*
  *  Copyright (c) 2019--2023, The University of Hong Kong
  *  All rights reserved.
@@ -275,6 +276,7 @@ public:
 		x_.build_vect_state();
 	}
 
+	std::function<void(const cov&, const cov&)> prediction_observer;
 	// iterated error state EKF propogation
 	void predict(double &dt, processnoisecovariance &Q, const input &i_in){
 		flatted_state f_ = f(x_, i_in);
@@ -380,6 +382,7 @@ public:
 		F_x1 += f_x_final * dt;
 		P_ = (F_x1) * P_ * (F_x1).transpose() + (dt * f_w_final) * Q * (dt * f_w_final).transpose();
 	#endif
+		if (prediction_observer) prediction_observer(F_x1, P_);
 	}
 
 	//iterated error state EKF update for measurement as a manifold.

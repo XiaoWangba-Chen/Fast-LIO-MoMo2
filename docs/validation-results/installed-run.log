@@ -1,0 +1,5 @@
+Multi thread started
+p_pre->lidar_type 3
+~~~~/home/cxt/SB/FAST_LIO/ file opened
+[INFO] [1793260523.955209414] [fastlio_mapping]: LiDAR frames received: 0
+Rebuild thread terminated normally

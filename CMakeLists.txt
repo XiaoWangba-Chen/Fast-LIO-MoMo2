@@ -1,89 +1,90 @@
-cmake_minimum_required(VERSION 2.8.3)
-project(fast_lio)
-
-SET(CMAKE_BUILD_TYPE "Debug")
-
-ADD_COMPILE_OPTIONS(-std=c++14 )
-ADD_COMPILE_OPTIONS(-std=c++14 )
-set( CMAKE_CXX_FLAGS "-std=c++14 -O3" )
-
-add_definitions(-DROOT_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/\")
-
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fexceptions" )
-set(CMAKE_CXX_STANDARD 14)
+cmake_minimum_required(VERSION 3.16)
+project(fast_lio LANGUAGES C CXX)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -pthread -std=c++0x -std=c++14 -fexceptions")
-
-message("Current CPU archtecture: ${CMAKE_SYSTEM_PROCESSOR}")
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)" )
-  include(ProcessorCount)
-  ProcessorCount(N)
-  message("Processer number:  ${N}")
-  if(N GREATER 4)
-    add_definitions(-DMP_EN)
-    add_definitions(-DMP_PROC_NUM=3)
-    message("core for MP: 3")
-  elseif(N GREATER 3)
-    add_definitions(-DMP_EN)
-    add_definitions(-DMP_PROC_NUM=2)
-    message("core for MP: 2")
-  else()
-    add_definitions(-DMP_PROC_NUM=1)
-  endif()
-else()
-  add_definitions(-DMP_PROC_NUM=1)
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
 endif()
-
-find_package(OpenMP QUIET)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}   ${OpenMP_C_FLAGS}")
-
-find_package(PythonLibs REQUIRED)
-find_path(MATPLOTLIB_CPP_INCLUDE_DIRS "matplotlibcpp.h")
-
-find_package(catkin REQUIRED COMPONENTS
-  geometry_msgs
-  nav_msgs
-  sensor_msgs
-  roscpp
-  rospy
-  std_msgs
-  pcl_ros
-  tf
-  livox_ros_driver
-  message_generation
-  eigen_conversions
-)
-
+option(FASTLIO_LIVOX "Build Livox ROS2 CustomMsg input" OFF)
+option(FASTLIO_LOW_MEMORY_BUILD "Use more frequent GCC garbage collection" ON)
+set(FASTLIO_MAPPING_THREADS 2 CACHE STRING "LiDAR matching workers (1 to 4)")
+if(NOT FASTLIO_MAPPING_THREADS MATCHES "^[1-4]$")
+  message(FATAL_ERROR "FASTLIO_MAPPING_THREADS must be between 1 and 4")
+endif()
+find_package(ament_cmake REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(visualization_msgs REQUIRED)
+find_package(diagnostic_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(pcl_conversions REQUIRED)
+find_package(cv_bridge REQUIRED)
 find_package(Eigen3 REQUIRED)
-find_package(PCL 1.8 REQUIRED)
+find_package(GTSAM 4.2.0 EXACT REQUIRED)
+find_package(PCL REQUIRED COMPONENTS common io filters kdtree registration)
+find_package(OpenMP REQUIRED)
+find_package(OpenCV REQUIRED COMPONENTS core imgproc video calib3d features2d)
+if(FASTLIO_LIVOX)
+  find_package(livox_ros_driver2 REQUIRED)
+endif()
+rosidl_generate_interfaces(${PROJECT_NAME} "msg/Pose6D.msg" DEPENDENCIES geometry_msgs)
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/include/ikd-Tree/ikd_Tree.cpp")
+  message(FATAL_ERROR "Initialize ikd-Tree: git submodule update --init")
+endif()
+add_library(fastlio_core src/fusion/degeneracy.cpp src/fusion/propagator.cpp src/fusion/observations.cpp src/fusion/clone_filter.cpp src/fusion/stereo.cpp)
+target_include_directories(fastlio_core PUBLIC include ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(fastlio_core PUBLIC Eigen3::Eigen ${OpenCV_LIBS})
+add_library(fastlio_backend src/fusion/backend.cpp)
+target_include_directories(fastlio_backend PUBLIC include ${PCL_INCLUDE_DIRS})
+target_link_libraries(fastlio_backend PUBLIC fastlio_core gtsam ${PCL_LIBRARIES})
+add_library(fastlio_runtime src/fusion/runtime.cpp)
+target_include_directories(fastlio_runtime PUBLIC include ${PCL_INCLUDE_DIRS})
+target_link_libraries(fastlio_runtime PUBLIC fastlio_core fastlio_backend)
+ament_target_dependencies(fastlio_runtime PUBLIC rclcpp sensor_msgs nav_msgs geometry_msgs diagnostic_msgs std_srvs tf2_ros pcl_conversions cv_bridge)
+add_executable(fastlio_mapping src/laserMapping.cpp src/preprocess.cpp include/ikd-Tree/ikd_Tree.cpp)
+target_include_directories(fastlio_mapping PRIVATE include src ${PCL_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
+if(FASTLIO_LOW_MEMORY_BUILD AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  target_compile_options(fastlio_mapping PRIVATE --param=ggc-min-expand=10 --param=ggc-min-heapsize=32768)
+endif()
+target_compile_definitions(fastlio_mapping PRIVATE ROOT_DIR="${CMAKE_CURRENT_SOURCE_DIR}/" MP_PROC_NUM=${FASTLIO_MAPPING_THREADS})
+if(FASTLIO_MAPPING_THREADS GREATER 1)
+  target_compile_definitions(fastlio_mapping PRIVATE MP_EN)
+endif()
+target_link_libraries(fastlio_mapping PUBLIC fastlio_core fastlio_runtime Eigen3::Eigen ${PCL_LIBRARIES} ${OpenCV_LIBS} OpenMP::OpenMP_CXX)
+ament_target_dependencies(fastlio_mapping PUBLIC rclcpp sensor_msgs nav_msgs geometry_msgs visualization_msgs diagnostic_msgs std_srvs tf2_ros pcl_conversions cv_bridge)
+rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME} rosidl_typesupport_cpp)
+target_link_libraries(fastlio_mapping PUBLIC "${cpp_typesupport_target}")
+if(FASTLIO_LIVOX)
+  target_compile_definitions(fastlio_mapping PRIVATE FASTLIO_LIVOX)
+  ament_target_dependencies(fastlio_mapping PUBLIC livox_ros_driver2)
+endif()
+# Colcon installs private shared libraries beside the executable. Preserve an
+# origin-relative lookup for those libraries and the selected local GTSAM prefix.
+set(FASTLIO_GTSAM_LIBRARY_DIR "")
+foreach(location_property IMPORTED_LOCATION_RELEASE IMPORTED_LOCATION_NOCONFIG IMPORTED_LOCATION)
+  get_target_property(gtsam_location gtsam ${location_property})
+  if(gtsam_location AND EXISTS "${gtsam_location}")
+    get_filename_component(FASTLIO_GTSAM_LIBRARY_DIR "${gtsam_location}" DIRECTORY)
+    break()
+  endif()
+endforeach()
+set_target_properties(fastlio_core fastlio_backend fastlio_runtime fastlio_mapping
+  PROPERTIES INSTALL_RPATH "$ORIGIN;${FASTLIO_GTSAM_LIBRARY_DIR}")
+install(TARGETS fastlio_core fastlio_backend fastlio_runtime fastlio_mapping DESTINATION lib/${PROJECT_NAME})
+install(DIRECTORY config launch DESTINATION share/${PROJECT_NAME} PATTERN "*.launch" EXCLUDE PATTERN "__pycache__" EXCLUDE)
+install(PROGRAMS scripts/publish_camera_info.py DESTINATION lib/${PROJECT_NAME})
+install(DIRECTORY docs DESTINATION share/${PROJECT_NAME})
+if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+  ament_add_gtest(test_core tests/test_core.cpp)
+  target_link_libraries(test_core fastlio_core)
+  ament_add_gtest(test_backend tests/test_backend.cpp)
+  target_link_libraries(test_backend fastlio_backend)
 
-message(Eigen: ${EIGEN3_INCLUDE_DIR})
-
-include_directories(
-	${catkin_INCLUDE_DIRS} 
-  ${EIGEN3_INCLUDE_DIR}
-  ${PCL_INCLUDE_DIRS}
-  ${PYTHON_INCLUDE_DIRS}
-  include)
-
-add_message_files(
-  FILES
-  Pose6D.msg
-)
-
-generate_messages(
- DEPENDENCIES
- geometry_msgs
-)
-
-catkin_package(
-  CATKIN_DEPENDS geometry_msgs nav_msgs roscpp rospy std_msgs message_runtime
-  DEPENDS EIGEN3 PCL
-  INCLUDE_DIRS
-)
-
-add_executable(fastlio_mapping src/laserMapping.cpp include/ikd-Tree/ikd_Tree.cpp src/preprocess.cpp)
-target_link_libraries(fastlio_mapping ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${PYTHON_LIBRARIES})
-target_include_directories(fastlio_mapping PRIVATE ${PYTHON_INCLUDE_DIRS})
+endif()
+ament_export_dependencies(rosidl_default_runtime)
+ament_package()

@@ -1,0 +1,20 @@
+Running main() from /opt/ros/humble/src/gtest_vendor/src/gtest_main.cc
+Note: Google Test filter = Backend.ScanContextYawAlignsCurrentCloudIntoHistoricalFrame
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from Backend
+[ RUN      ] Backend.ScanContextYawAlignsCurrentCloudIntoHistoricalFrame
+/home/cxt/SB/FAST_LIO/tests/test_backend.cpp:74: Failure
+Expected: (result.loops) > (0), actual: 0 vs 0
+/home/cxt/SB/FAST_LIO/tests/test_backend.cpp:75: Failure
+Expected: (result.trajectory.back().second.translation().x()) < (.15), actual: 0.3 vs 0.15
+[  FAILED  ] Backend.ScanContextYawAlignsCurrentCloudIntoHistoricalFrame (24 ms)
+[----------] 1 test from Backend (24 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (24 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] Backend.ScanContextYawAlignsCurrentCloudIntoHistoricalFrame
+
+ 1 FAILED TEST

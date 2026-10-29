@@ -1,0 +1,12 @@
+Multi thread started
+p_pre->lidar_type 2
+~~~~/home/cxt/SB/FAST_LIO/ file opened
+[INFO] [1793263985.001489286] [fast_lio]: IMU Initial Done
+[ERROR] [1793263987.801675292] [fast_lio]: lidar loop back, clear buffer
+[WARN] [1793263987.801836047] [fast_lio]: imu loop back, clear buffer
+[WARN] [1793263987.811886670] [fastlio_mapping]: Estimator session reset after time discontinuity or IMU gap
+[INFO] [1793263988.101384386] [fast_lio]: IMU Initial Done
+Rebuild thread terminated normally
+Multi thread started
+[INFO] [1793263991.832158465] [fastlio_mapping]: LiDAR frames received: 61
+Rebuild thread terminated normally

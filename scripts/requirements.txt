@@ -1,0 +1,9 @@
+# Offline data tools; use a dedicated environment, separate from ROS cv_bridge.
+rosbags==0.10.11
+gdown==5.2.0
+numpy==1.26.4
+scipy==1.15.3
+PyYAML==6.0.2
+py7zr==0.22.0
+opencv-python-headless==4.10.0.84
+matplotlib==3.9.4

@@ -1,0 +1,25 @@
+version: 1
+budget_bytes: 30000000000
+sources:
+  fusionportable_v2:
+    official: https://fusionportable.github.io/dataset/fusionportable_v2/
+    files:
+      - name: ugv_parking00_rosbag.7z
+        url: https://drive.google.com/uc?id=17pnn17Z0ms8qCYKC8VgJS5ypoS46lodA
+        bytes: 4063287652
+        sha256: null
+      - name: ugv_campus01_rosbag.7z
+        url: https://drive.google.com/uc?id=17mewakWMRY8pI4XbAEy45kK0sTDUGLfV
+        bytes: null
+        sha256: null
+    calibration: https://github.com/fusionportable/calibration_files
+    groundtruth: https://drive.google.com/drive/folders/1d3Fd4N84xkvZehKj_pB5QNY8N7FBoGZE
+    lidar_header: scan_end
+    point_time_field: t
+    point_time_unit: nanoseconds
+    note: Inspect actual bag topics before selecting raw GNSS; INS output is not raw GNSS.
+  enwide:
+    official: https://projects.asl.ethz.ch/datasets/enwide/
+    landing: https://doi.org/10.3929/ethz-c-000787551
+    files: []
+    note: Resolve official collection download links; no unverified file URLs or hashes are invented.

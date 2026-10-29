@@ -1,0 +1,17 @@
+{
+  "alignment": "SE3",
+  "scale": 1.0,
+  "associated_poses": 304,
+  "association_fraction": 1.0,
+  "duration_seconds": 177.2014615535736,
+  "ate_rmse_m": 0.7814210648804039,
+  "ate_median_m": 0.5980509966979715,
+  "rpe_interval_s": 1.0,
+  "rpe_pairs": 142,
+  "position_only_reference": true,
+  "rpe_translation_rmse_m": null,
+  "rpe_position_displacement_rmse_m": 0.16970765682354866,
+  "rpe_rotation_rmse_deg": null,
+  "reference_source": "Official ugv_parking00 positions; body_imu reference-point assumption; orientation convention and independence unverified; GNSS disabled",
+  "estimate_point": "imu"
+}

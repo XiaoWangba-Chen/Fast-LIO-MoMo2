@@ -1,0 +1,6 @@
+Multi thread started
+p_pre->lidar_type 2
+~~~~/home/cxt/SB/FAST_LIO/ file opened
+[INFO] [1793263957.645094933] [fast_lio]: IMU Initial Done
+[INFO] [1793263964.479083814] [fastlio_mapping]: LiDAR frames received: 61
+Rebuild thread terminated normally

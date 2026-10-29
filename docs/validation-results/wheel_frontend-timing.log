@@ -1,0 +1,109 @@
+{
+  "streams": {
+    "/odometry/local": {
+      "messages": 599,
+      "start": 1686284028.1539989,
+      "end": 1686284087.950617,
+      "duration_s": 59.79661822319031,
+      "backwards": 0,
+      "same_epoch_revisions": 0,
+      "median_rate_hz": 9.986473761215814,
+      "max_interval_s": 0.10764932632446289
+    },
+    "/odometry/imu": {
+      "messages": 11930,
+      "start": 1686284028.3425338,
+      "end": 1686284087.987538,
+      "duration_s": 59.64500427246094,
+      "backwards": 0,
+      "same_epoch_revisions": 0,
+      "median_rate_hz": 199.99542246805265,
+      "max_interval_s": 0.012667655944824219
+    },
+    "/odometry/global": {
+      "messages": 109,
+      "start": 1686284028.7523332,
+      "end": 1686284087.6549637,
+      "duration_s": 58.90263056755066,
+      "backwards": 0,
+      "same_epoch_revisions": 0,
+      "median_rate_hz": 1.9966173260881466,
+      "max_interval_s": 1.0957200527191162
+    }
+  },
+  "diagnostics_samples": 598,
+  "processing_ms": {
+    "p50": 37.348665,
+    "p95": 46.61087979999999,
+    "maximum": 72.023408,
+    "last": 38.682846,
+    "tail_mean": 37.836960649999995
+  },
+  "state_lag_ms": {
+    "p50": 43.588995499999996,
+    "p95": 55.404448849999994,
+    "maximum": 75.455904,
+    "last": 35.240412,
+    "tail_mean": 44.12569995
+  },
+  "lidar_queue": {
+    "p50": 0.0,
+    "p95": 0.0,
+    "maximum": 0.0,
+    "last": 0.0,
+    "tail_mean": 0.0
+  },
+  "imu_queue": {
+    "p50": 1.0,
+    "p95": 3.0,
+    "maximum": 36.0,
+    "last": 1.0,
+    "tail_mean": 1.55
+  },
+  "aux_queue": {
+    "p50": 4.0,
+    "p95": 6.0,
+    "maximum": 24.0,
+    "last": 4.0,
+    "tail_mean": 4.2
+  },
+  "final_counters": {
+    "session": "0",
+    "stereo.updates": "0",
+    "stereo.features": "0",
+    "degeneracy.reason": "0",
+    "degeneracy.severe": "0",
+    "degeneracy.degraded": "0",
+    "weak_dimensions": "0",
+    "match_ratio": "0.802561",
+    "residual": "0.018454",
+    "lidar_queue": "0",
+    "imu_queue": "1",
+    "processing_ms": "38.682846",
+    "imu_gap_count": "0",
+    "wheel.accepted": "5357",
+    "wheel.rejected": "3",
+    "wheel.late": "10",
+    "wheel.overflow": "0",
+    "gnss.accepted": "0",
+    "gnss.rejected": "0",
+    "gnss.late": "0",
+    "gnss.overflow": "0",
+    "stereo.accepted": "0",
+    "stereo.rejected": "0",
+    "stereo.late": "0",
+    "stereo.overflow": "0",
+    "imu.invalid": "0",
+    "aux_queue": "4",
+    "state_lag_ms": "35.240412",
+    "backend.dropped": "0",
+    "backend.processed": "109",
+    "backend.loops": "0",
+    "backend.wheel_factors": "0",
+    "backend.gnss_factors": "0",
+    "backend.visual_factors": "0"
+  },
+  "severe_lidar_samples": 5,
+  "geometrically_degraded_samples": 0,
+  "no_sustained_backlog": true
+}

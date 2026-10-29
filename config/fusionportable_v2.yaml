@@ -1,0 +1,71 @@
+# Derived from official FusionPortableV2 UGV 20230426 calibration.
+# Input must be normalized by scripts/dataset.py; CameraInfo is embedded in the bag.
+# GNSS disabled because the published antenna lever arms are unspecified.
+/**:
+  ros__parameters:
+    common.lid_topic: /points_raw
+    common.imu_topic: /imu/data
+    common.time_sync_en: false
+    common.time_offset_lidar_to_imu: 0.0
+    preprocess.lidar_type: 2
+    preprocess.timestamp_unit: 0
+    preprocess.scan_line: 128
+    preprocess.scan_rate: 10
+    preprocess.blind: 0.5
+    point_filter_num: 3
+    filter_size_surf: 0.3
+    filter_size_map: 0.3
+    mapping.fov_degree: 360.0
+    mapping.det_range: 100.0
+    mapping.extrinsic_est_en: false
+    mapping.extrinsic_T:
+    - 0.035956798191244664
+    - -0.01764044203104226
+    - 0.03291763779166941
+    mapping.extrinsic_R:
+    - 0.9999585898643645
+    - 0.008307470848977424
+    - 0.003715438677313323
+    - -0.00831236063318532
+    - 0.9999646033575396
+    - 0.001302571572925362
+    - -0.0037044860878880943
+    - -0.0013334016994561658
+    - 0.9999922493813304
+    mapping.gyr_cov: 7.388354661470327e-07
+    mapping.acc_cov: 0.0002591392043345594
+    mapping.b_gyr_cov: 2.3869409785471955e-11
+    mapping.b_acc_cov: 2.719596779408452e-07
+    stereo.left_time_offset: -0.013618216766727708
+    stereo.right_time_offset: -0.01386046589177228
+    fusion.mode: backend
+    wheel.enabled: true
+    stereo.enabled: true
+    gnss.enabled: false
+    backend.enabled: true
+    backend.loop_enabled: true
+    pcd_save.pcd_save_en: false
+    publish.path_en: false
+    publish.scan_publish_en: false
+    extrinsics.imu_T_base.translation:
+    - -1.138679
+    - 0.00328
+    - -1.469194
+    extrinsics.imu_T_base.quaternion:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 1.0
+    extrinsics.imu_T_camera.translation:
+    - 0.08529096607975446
+    - 0.06908451214164485
+    - -0.018078856195376403
+    extrinsics.imu_T_camera.quaternion:
+    - -0.49436652382461954
+    - 0.505169535271356
+    - -0.49781552747914076
+    - 0.5025785325259616
+    common.reliable_inputs: true
+    stereo.max_clones: 6
+    cube_side_length: 1000.0
+    max_iteration: 3

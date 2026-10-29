@@ -1,0 +1,7 @@
+# Apply after slam.yaml and your calibrated rig configuration.
+/**:
+  ros__parameters:
+    fusion.mode: backend
+    wheel.enabled: true
+    gnss.enabled: true
+    stereo.enabled: true

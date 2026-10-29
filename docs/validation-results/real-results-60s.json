@@ -1,0 +1,1096 @@
+{
+  "reference_source": "Official ugv_parking00 positions; body_imu reference-point assumption; orientation convention and independence unverified; GNSS disabled",
+  "alignment": "SE3; scale fixed to 1; position only",
+  "profile": {
+    "mapping_workers": 2,
+    "max_iteration": 3,
+    "cube_side_length_m": 1000,
+    "stereo_max_clones": 6,
+    "reliable_inputs": true
+  },
+  "limitations": [
+    "Original ROS1 binary migration comparison not run",
+    "Real GNSS fusion disabled: antenna lever arm unavailable",
+    "ENWIDE bag unavailable (HTTP 429)",
+    "Synthetic latency test is separate from real bag timing"
+  ],
+  "provenance_note": "Source hashes describe collection-time files. New runs record build artifact hashes. Loop-enabled backend runs were repeated after the Scan Context yaw fix; retained local-frontend and loop-disabled metrics use paths unaffected by that fix.",
+  "source_sha256": {
+    "CMakeLists.txt": "25493d18f50c7fda8a9186b5871186f4fe3a6bd239aee48b4dcef945b426de98",
+    "config/fusionportable_v2.yaml": "7dabd8ce3a5cc0301a0bf3312261d2638582d6ede1ea67125b1e906e376bd9c8",
+    "src/laserMapping.cpp": "94a6895f6c41c7ccba6764e60dd793c0f38026c87cc87cde7ef182446490e28f",
+    "src/fusion/backend.cpp": "a4e391bf7394d8f78f2533fe21a6486fdced7336f32839a2d922cb7aa3ddef88",
+    "src/fusion/clone_filter.cpp": "7d99281d3d00a0a45766cc1d89a19f2ea7f623e21d55b862a69eccd3d5370e7e",
+    "src/fusion/degeneracy.cpp": "11a427355ba320b081135c6a9049e08b1c2a426cc603359f97b84c98d6d09e93",
+    "src/fusion/observations.cpp": "69b6f43b919604fbd9541b0eacbfb42399011f20f91ce90e38be7b57184a25ee",
+    "src/fusion/propagator.cpp": "12df34a3f0d85ac8253ace306c6a09dab67f9b3d042e66402beb990fbf5c02f9",
+    "src/fusion/runtime.cpp": "b40f00031406b94cade61b916e993adf9ce001f4d65c47af0b5ab89c159d8619",
+    "src/fusion/stereo.cpp": "12acc2f13a5597b3437adfaf83cde2077443b9345378935922f7b0556c6f5769"
+  },
+  "runs": {
+    "fusionportable_60s/all_backend": {
+      "run": {
+        "variant": "all_backend",
+        "playback_exit": 0,
+        "wall_seconds": 61.70642097000018,
+        "peak_rss_kib": 667268,
+        "synthetic": false,
+        "build_sha256": {
+          "build/fast_lio/fastlio_mapping": "2d7d78a78b282b6ee5161d591425f363f5c79a5e9d6eaaca4dad31db3b38fd73",
+          "build/fast_lio/libfastlio_backend.so": "af04ab6ca24995ecb5de71b1a90a70209097799b3c54d7cdd710dbec53350f9d",
+          "build/fast_lio/libfastlio_core.so": "089af92177fd45a16f11a0a9dad98adc47590491a67e335baccde909a3cc7d18",
+          "build/fast_lio/libfastlio_runtime.so": "8b12327a0a207727477a4db6115253084f0447ffd332a36f77737b726050e6e5"
+        },
+        "enabled_sensors": [
+          "stereo",
+          "wheel"
+        ]
+      },
+      "metric_topic": "/odometry/global",
+      "online_position": {
+        "alignment": "SE3",
+        "scale": 1.0,
+        "associated_poses": 1290,
+        "association_fraction": 1.0,
+        "duration_seconds": 59.69356346130371,
+        "ate_rmse_m": 0.8694203943282568,
+        "ate_median_m": 0.853628887153881,
+        "rpe_interval_s": 1.0,
+        "rpe_pairs": 1265,
+        "position_only_reference": true,
+        "rpe_translation_rmse_m": null,
+        "rpe_position_displacement_rmse_m": 0.2248598740117672,
+        "rpe_rotation_rmse_deg": null,
+        "reference_source": "Official ugv_parking00 positions; body_imu reference-point assumption; orientation convention and independence unverified; GNSS disabled",
+        "estimate_point": "imu"
+      },
+      "timing": {
+        "streams": {
+          "/odometry/local": {
+            "messages": 599,
+            "start": 1686284028.1539989,
+            "end": 1686284087.950617,
+            "duration_s": 59.79661822319031,
+            "backwards": 0,
+            "same_epoch_revisions": 0,
+            "median_rate_hz": 9.986473761215814,
+            "max_interval_s": 0.10764932632446289
+          },
+          "/odometry/imu": {
+            "messages": 11920,
+            "start": 1686284028.3927922,
+            "end": 1686284087.987538,
+            "duration_s": 59.59474587440491,
+            "backwards": 0,
+            "same_epoch_revisions": 0,
+            "median_rate_hz": 199.99542246805265,
+            "max_interval_s": 0.012667655944824219
+          },
+          "/odometry/global": {
+            "messages": 1290,
+            "start": 1686284028.182182,
+            "end": 1686284087.8757455,
+            "duration_s": 59.69356346130371,
+            "backwards": 0,
+            "same_epoch_revisions": 0,
+            "median_rate_hz": 20.033357851800197,
+            "max_interval_s": 0.1500537395477295
+          }
+        },
+        "diagnostics_samples": 598,
+        "processing_ms": {
+          "p50": 61.9309055,
+          "p95": 78.2067438,
+          "maximum": 106.829297,
+          "last": 57.445094,
+          "tail_mean": 63.46020484999999
+        },
+        "state_lag_ms": {
+          "p50": 70.1550245,
+          "p95": 92.04509279999999,
+          "maximum": 130.848885,
+          "last": 34.305573,
+          "tail_mean": 67.67520905
+        },
+        "lidar_queue": {
+          "p50": 0.0,
+          "p95": 0.0,
+          "maximum": 0.0,
+          "last": 0.0,
+          "tail_mean": 0.0
+        },
+        "imu_queue": {
+          "p50": 1.0,
+          "p95": 3.0,
+          "maximum": 17.0,
+          "last": 4.0,
+          "tail_mean": 1.9
+        },
+        "aux_queue": {
+          "p50": 8.0,
+          "p95": 10.0,
+          "maximum": 26.0,
+          "last": 4.0,
+          "tail_mean": 7.25
+        },
+        "final_counters": {
+          "session": "0",
+          "stereo.updates": "0",
+          "stereo.features": "126",
+          "degeneracy.reason": "0",
+          "degeneracy.severe": "0",
+          "degeneracy.degraded": "0",
+          "weak_dimensions": "0",
+          "match_ratio": "0.793805",
+          "residual": "0.018154",
+          "lidar_queue": "0",
+          "imu_queue": "4",
+          "processing_ms": "57.445094",
+          "imu_gap_count": "0",
+          "wheel.accepted": "5348",
+          "wheel.rejected": "0",
+          "wheel.late": "9",
+          "wheel.overflow": "0",
+          "gnss.accepted": "0",
+          "gnss.rejected": "0",
+          "gnss.late": "0",
+          "gnss.overflow": "0",
+          "stereo.accepted": "1181",
+          "stereo.rejected": "2",
+          "stereo.late": "17",
+          "stereo.overflow": "0",
+          "imu.invalid": "0",
+          "aux_queue": "4",
+          "state_lag_ms": "34.305573",
+          "backend.dropped": "0",
+          "backend.processed": "1290",
+          "backend.loops": "0",
+          "backend.wheel_factors": "1277",
+          "backend.gnss_factors": "0",
+          "backend.visual_factors": "19318"
+        },
+        "severe_lidar_samples": 5,
+        "geometrically_degraded_samples": 0,
+        "no_sustained_backlog": true
+      },
+      "local_control_position": {
+        "alignment": "SE3",
+        "scale": 1.0,
+        "associated_poses": 599,
+        "association_fraction": 1.0,
+        "duration_seconds": 59.79661822319031,
+        "ate_rmse_m": 0.30863663498089255,
+        "ate_median_m": 0.2828032616910028,
+        "rpe_interval_s": 1.0,
+        "rpe_pairs": 491,
+        "position_only_reference": true,
+        "rpe_translation_rmse_m": null,
+        "rpe_position_displacement_rmse_m": 0.09925130646518152,
+        "rpe_rotation_rmse_deg": null,
+        "reference_source": "Official ugv_parking00 positions; body_imu reference-point assumption; orientation convention and independence unverified; GNSS disabled",
+        "estimate_point": "imu"
+      },
+      "final_optimized_position": {
+        "alignment": "SE3",
+        "scale": 1.0,
+        "associated_poses": 1290,
+        "association_fraction": 1.0,
+        "duration_seconds": 59.69356346130371,
+        "ate_rmse_m": 0.8624892875916633,
+        "ate_median_m": 0.8427159958337154,
+        "rpe_interval_s": 1.0,
+        "rpe_pairs": 1265,
+        "position_only_reference": true,
+        "rpe_translation_rmse_m": null,
+        "rpe_position_displacement_rmse_m": 0.1986252785345022,
+        "rpe_rotation_rmse_deg": null,
+        "reference_source": "Official ugv_parking00 positions; body_imu reference-point assumption; orientation convention and independence unverified; GNSS disabled",
+        "estimate_point": "imu"
+      }
+    },
+    "fusionportable_60s/all_backend_no_loop": {
+      "run": {
+        "variant": "all_backend_no_loop",
+        "playback_exit": 0,
+        "wall_seconds": 61.311023207999824,
+        "peak_rss_kib": 661440,
+        "synthetic": false,
+        "enabled_sensors": [
+          "stereo",
+          "wheel"
+        ]
+      },
+      "metric_topic": "/odometry/global",
+      "online_position": {
+        "alignment": "SE3",
+        "scale": 1.0,
+        "associated_poses": 1294,
+        "association_fraction": 1.0,
+        "duration_seconds": 59.74313020706177,
+        "ate_rmse_m": 0.8446144227681911,
+        "ate_median_m": 0.8651009473797311,
+        "rpe_interval_s": 1.0,
+        "rpe_pairs": 1269,
+        "position_only_reference": true,
+        "rpe_translation_rmse_m": null,
+        "rpe_position_displacement_rmse_m": 0.27027457582694875,
+        "rpe_rotation_rmse_deg": null,
+        "reference_source": "Official ugv_parking00 positions; body_imu reference-point assumption; orientation convention and independence unverified; GNSS disabled",
+        "estimate_point": "imu"
+      },
+      "timing": {
+        "streams": {
+          "/odometry/local": {
+            "messages": 599,
+            "start": 1686284028.1539989,
+            "end": 1686284087.950617,
+            "duration_s": 59.79661822319031,
+            "backwards": 0,
+            "same_epoch_revisions": 0,
+            "median_rate_hz": 9.986473761215814,
+            "max_interval_s": 0.10764932632446289
+          },
+          "/odometry/imu": {
+            "messages": 11919,
+            "start": 1686284028.362805,
+            "end": 1686284087.987538,
+            "duration_s": 59.624733209609985,
+            "backwards": 0,
+            "same_epoch_revisions": 0,
+            "median_rate_hz": 199.99542246805265,
+            "max_interval_s": 0.03990507125854492
+          },
+          "/odometry/global": {
+            "messages": 1294,
+            "start": 1686284028.182182,
+            "end": 1686284087.9253123,
+            "duration_s": 59.74313020706177,
+            "backwards": 0,
+            "same_epoch_revisions": 0,
+            "median_rate_hz": 20.033357851800197,
+            "max_interval_s": 0.15038800239562988
+          }
+        },
+        "diagnostics_samples": 598,
+        "processing_ms": {
+          "p50": 66.8598255,
+          "p95": 84.7908212,
+          "maximum": 135.597888,
+          "last": 66.48268,
+          "tail_mean": 65.03403175
+        },
+        "state_lag_ms": {
+          "p50": 69.332719,
+          "p95": 97.28118219999999,
+          "maximum": 184.696198,
+          "last": 39.401054,
+          "tail_mean": 66.75142055
+        },
+        "lidar_queue": {
+          "p50": 0.0,
+          "p95": 0.0,
+          "maximum": 0.0,
+          "last": 0.0,
+          "tail_mean": 0.0
+        },
+        "imu_queue": {
+          "p50": 1.0,
+          "p95": 3.0,
+          "maximum": 11.0,
+          "last": 1.0,
+          "tail_mean": 1.35
+        },
+        "aux_queue": {
+          "p50": 8.0,
+          "p95": 11.0,
+          "maximum": 21.0,
+          "last": 4.0,
+          "tail_mean": 7.2
+        },
+        "final_counters": {
+          "session": "0",
+          "stereo.updates": "0",
+          "stereo.features": "130",
+          "degeneracy.reason": "0",
+          "degeneracy.severe": "0",
+          "degeneracy.degraded": "0",
+          "weak_dimensions": "0",
+          "match_ratio": "0.795189",
+          "residual": "0.018381",
+          "lidar_queue": "0",
+          "imu_queue": "1",
+          "processing_ms": "66.482680",
+          "imu_gap_count": "0",
+          "wheel.accepted": "5345",
+          "wheel.rejected": "0",
+          "wheel.late": "7",
+          "wheel.overflow": "0",
+          "gnss.accepted": "0",
+          "gnss.rejected": "0",
+          "gnss.late": "0",
+          "gnss.overflow": "0",
+          "stereo.accepted": "1185",
+          "stereo.rejected": "2",
+          "stereo.late": "14",
+          "stereo.overflow": "0",
+          "imu.invalid": "0",
+          "aux_queue": "4",
+          "state_lag_ms": "39.401054",
+          "backend.dropped": "0",
+          "backend.processed": "1294",
+          "backend.loops": "0",
+          "backend.wheel_factors": "1280",
+          "backend.gnss_factors": "0",
+          "backend.visual_factors": "19313"
+        },
+        "severe_lidar_samples": 5,
+        "geometrically_degraded_samples": 0,
+        "no_sustained_backlog": true
+      },
+      "local_control_position": {
+        "alignment": "SE3",
+        "scale": 1.0,
+        "associated_poses": 599,
+        "association_fraction": 1.0,
+        "duration_seconds": 59.79661822319031,
+        "ate_rmse_m": 0.30736546791488556,
+        "ate_median_m": 0.2798267525302209,
+        "rpe_interval_s": 1.0,
+        "rpe_pairs": 491,
+        "position_only_reference": true,
+        "rpe_translation_rmse_m": null,
+        "rpe_position_displacement_rmse_m": 0.0994631798514861,
+        "rpe_rotation_rmse_deg": null,
+        "reference_source": "Official ugv_parking00 positions; body_imu reference-point assumption; orientation convention and independence unverified; GNSS disabled",
+        "estimate_point": "imu"
+      },
+      "final_optimized_position": {
+        "alignment": "SE3",
+        "scale": 1.0,
+        "associated_poses": 1294,
+        "association_fraction": 1.0,
+        "duration_seconds": 59.74313020706177,
+        "ate_rmse_m": 0.8235804511953054,
+        "ate_median_m": 0.8332309036940013,
+        "rpe_interval_s": 1.0,
+        "rpe_pairs": 1269,
+        "position_only_reference": true,
+        "rpe_translation_rmse_m": null,
+        "rpe_position_displacement_rmse_m": 0.15877293274959348,
+        "rpe_rotation_rmse_deg": null,
+        "reference_source": "Official ugv_parking00 positions; body_imu reference-point assumption; orientation convention and independence unverified; GNSS disabled",
+        "estimate_point": "imu"
+      }
+    },
+    "fusionportable_60s/all_frontend": {
+      "run": {
+        "variant": "all_frontend",
+        "playback_exit": 0,
+        "wall_seconds": 61.71023790600066,
+        "peak_rss_kib": 500464,
+        "synthetic": false,
+        "enabled_sensors": [
+          "stereo",
+          "wheel"
+        ]
+      },
+      "metric_topic": "/odometry/local",
+      "online_position": {
+        "alignment": "SE3",
+        "scale": 1.0,
+        "associated_poses": 597,
+        "association_fraction": 1.0,
+        "duration_seconds": 59.596524715423584,
+        "ate_rmse_m": 0.30777797501861753,
+        "ate_median_m": 0.2829734175709002,
+        "rpe_interval_s": 1.0,
+        "rpe_pairs": 489,
+        "position_only_reference": true,
+        "rpe_translation_rmse_m": null,
+        "rpe_position_displacement_rmse_m": 0.09893443656486792,
+        "rpe_rotation_rmse_deg": null,
+        "reference_source": "Official ugv_parking00 positions; body_imu reference-point assumption; orientation convention and independence unverified; GNSS disabled",
+        "estimate_point": "imu"
+      },
+      "timing": {
+        "streams": {
+          "/odometry/local": {
+            "messages": 597,
+            "start": 1686284028.3540924,
+            "end": 1686284087.950617,
+            "duration_s": 59.596524715423584,
+            "backwards": 0,
+            "same_epoch_revisions": 0,
+            "median_rate_hz": 9.986473761215814,
+            "max_interval_s": 0.10764932632446289
+          },
+          "/odometry/imu": {
+            "messages": 11915,
+            "start": 1686284028.412578,
+            "end": 1686284087.987538,
+            "duration_s": 59.57495999336243,
+            "backwards": 0,
+            "same_epoch_revisions": 0,
+            "median_rate_hz": 199.99542246805265,
+            "max_interval_s": 0.012667655944824219
+          },
+          "/odometry/global": {
+            "messages": 109,
+            "start": 1686284028.953062,
+            "end": 1686284087.6549637,
+            "duration_s": 58.70190167427063,
+            "backwards": 0,
+            "same_epoch_revisions": 0,
+            "median_rate_hz": 1.998804807077372,
+            "max_interval_s": 1.0999722480773926
+          }
+        },
+        "diagnostics_samples": 596,
+        "processing_ms": {
+          "p50": 68.966503,
+          "p95": 86.4470975,
+          "maximum": 162.289949,
+          "last": 81.087343,
+          "tail_mean": 70.96985204999999
+        },
+        "state_lag_ms": {
+          "p50": 75.3628015,
+          "p95": 99.28518550000001,
+          "maximum": 176.274538,
+          "last": 29.893875,
+          "tail_mean": 70.13274439999999
+        },
+        "lidar_queue": {
+          "p50": 0.0,
+          "p95": 0.0,
+          "maximum": 0.0,
+          "last": 0.0,
+          "tail_mean": 0.0
+        },
+        "imu_queue": {
+          "p50": 1.0,
+          "p95": 3.0,
+          "maximum": 24.0,
+          "last": 1.0,
+          "tail_mean": 1.2
+        },
+        "aux_queue": {
+          "p50": 8.0,
+          "p95": 12.0,
+          "maximum": 21.0,
+          "last": 4.0,
+          "tail_mean": 7.4
+        },
+        "final_counters": {
+          "session": "0",
+          "stereo.updates": "1177",
+          "stereo.features": "130",
+          "degeneracy.reason": "0",
+          "degeneracy.severe": "0",
+          "degeneracy.degraded": "0",
+          "weak_dimensions": "0",
+          "match_ratio": "0.798740",
+          "residual": "0.017787",
+          "lidar_queue": "0",
+          "imu_queue": "1",
+          "processing_ms": "81.087343",
+          "imu_gap_count": "0",
+          "wheel.accepted": "5337",
+          "wheel.rejected": "3",
+          "wheel.late": "9",
+          "wheel.overflow": "0",
+          "gnss.accepted": "0",
+          "gnss.rejected": "0",
+          "gnss.late": "0",
+          "gnss.overflow": "0",
+          "stereo.accepted": "1187",
+          "stereo.rejected": "2",
+          "stereo.late": "12",
+          "stereo.overflow": "0",
+          "imu.invalid": "0",
+          "aux_queue": "4",
+          "state_lag_ms": "29.893875",
+          "backend.dropped": "0",
+          "backend.processed": "109",
+          "backend.loops": "0",
+          "backend.wheel_factors": "0",
+          "backend.gnss_factors": "0",
+          "backend.visual_factors": "0"
+        },
+        "severe_lidar_samples": 5,
+        "geometrically_degraded_samples": 0,
+        "no_sustained_backlog": true
+      },
+      "final_optimized_position": {
+        "alignment": "SE3",
+        "scale": 1.0,
+        "associated_poses": 109,
+        "association_fraction": 1.0,
+        "duration_seconds": 58.70190167427063,
+        "ate_rmse_m": 0.31548308996582036,
+        "ate_median_m": 0.28784722072283325,
+        "rpe_interval_s": 1.0,
+        "rpe_pairs": 42,
+        "position_only_reference": true,
+        "rpe_translation_rmse_m": null,
+        "rpe_position_displacement_rmse_m": 0.09199333354709945,
+        "rpe_rotation_rmse_deg": null,
+        "reference_source": "Official ugv_parking00 positions; body_imu reference-point assumption; orientation convention and independence unverified; GNSS disabled",
+        "estimate_point": "imu"
+      }
+    },
+    "fusionportable_60s/degeneracy": {
+      "run": {
+        "variant": "degeneracy",
+        "playback_exit": 0,
+        "wall_seconds": 61.707251310000174,
+        "peak_rss_kib": 316696,
+        "synthetic": false,
+        "enabled_sensors": []
+      },
+      "metric_topic": "/odometry/local",
+      "online_position": {
+        "alignment": "SE3",
+        "scale": 1.0,
+        "associated_poses": 599,
+        "association_fraction": 1.0,
+        "duration_seconds": 59.79661822319031,
+        "ate_rmse_m": 0.30138579968718954,
+        "ate_median_m": 0.28003747188438344,
+        "rpe_interval_s": 1.0,
+        "rpe_pairs": 491,
+        "position_only_reference": true,
+        "rpe_translation_rmse_m": null,
+        "rpe_position_displacement_rmse_m": 0.09853669825984411,
+        "rpe_rotation_rmse_deg": null,
+        "reference_source": "Official ugv_parking00 positions; body_imu reference-point assumption; orientation convention and independence unverified; GNSS disabled",
+        "estimate_point": "imu"
+      },
+      "timing": {
+        "streams": {
+          "/odometry/local": {
+            "messages": 599,
+            "start": 1686284028.1539989,
+            "end": 1686284087.950617,
+            "duration_s": 59.79661822319031,
+            "backwards": 0,
+            "same_epoch_revisions": 0,
+            "median_rate_hz": 9.986473761215814,
+            "max_interval_s": 0.10764932632446289
+          },
+          "/odometry/imu": {
+            "messages": 11938,
+            "start": 1686284028.2475522,
+            "end": 1686284087.987538,
+            "duration_s": 59.739985942840576,
+            "backwards": 0,
+            "same_epoch_revisions": 0,
+            "median_rate_hz": 199.99542246805265,
+            "max_interval_s": 0.06372404098510742
+          }
+        },
+        "diagnostics_samples": 598,
+        "processing_ms": {
+          "p50": 36.026503,
+          "p95": 46.261715499999994,
+          "maximum": 139.661813,
+          "last": 43.616768,
+          "tail_mean": 38.233266449999995
+        },
+        "state_lag_ms": {
+          "p50": 43.223738999999995,
+          "p95": 55.8136224,
+          "maximum": 164.166927,
+          "last": 35.325527,
+          "tail_mean": 42.69688135
+        },
+        "lidar_queue": {
+          "p50": 0.0,
+          "p95": 0.0,
+          "maximum": 0.0,
+          "last": 0.0,
+          "tail_mean": 0.0
+        },
+        "imu_queue": {
+          "p50": 1.0,
+          "p95": 3.0,
+          "maximum": 14.0,
+          "last": 1.0,
+          "tail_mean": 1.45
+        },
+        "aux_queue": {
+          "p50": 0.0,
+          "p95": 0.0,
+          "maximum": 0.0,
+          "last": 0.0,
+          "tail_mean": 0.0
+        },
+        "final_counters": {
+          "session": "0",
+          "stereo.updates": "0",
+          "stereo.features": "0",
+          "degeneracy.reason": "0",
+          "degeneracy.severe": "0",
+          "degeneracy.degraded": "0",
+          "weak_dimensions": "0",
+          "match_ratio": "0.802479",
+          "residual": "0.018065",
+          "lidar_queue": "0",
+          "imu_queue": "1",
+          "processing_ms": "43.616768",
+          "imu_gap_count": "0",
+          "wheel.accepted": "0",
+          "wheel.rejected": "0",
+          "wheel.late": "0",
+          "wheel.overflow": "0",
+          "gnss.accepted": "0",
+          "gnss.rejected": "0",
+          "gnss.late": "0",
+          "gnss.overflow": "0",
+          "stereo.accepted": "0",
+          "stereo.rejected": "0",
+          "stereo.late": "0",
+          "stereo.overflow": "0",
+          "imu.invalid": "0",
+          "aux_queue": "0",
+          "state_lag_ms": "35.325527"
+        },
+        "severe_lidar_samples": 5,
+        "geometrically_degraded_samples": 0,
+        "no_sustained_backlog": true
+      }
+    },
+    "fusionportable_60s/lio": {
+      "run": {
+        "variant": "lio",
+        "playback_exit": 0,
+        "wall_seconds": 61.30698042200038,
+        "peak_rss_kib": 317520,
+        "synthetic": false,
+        "enabled_sensors": []
+      },
+      "metric_topic": "/odometry/local",
+      "online_position": {
+        "alignment": "SE3",
+        "scale": 1.0,
+        "associated_poses": 599,
+        "association_fraction": 1.0,
+        "duration_seconds": 59.79661822319031,
+        "ate_rmse_m": 0.3021233293289874,
+        "ate_median_m": 0.2815296236400129,
+        "rpe_interval_s": 1.0,
+        "rpe_pairs": 491,
+        "position_only_reference": true,
+        "rpe_translation_rmse_m": null,
+        "rpe_position_displacement_rmse_m": 0.09871090070831763,
+        "rpe_rotation_rmse_deg": null,
+        "reference_source": "Official ugv_parking00 positions; body_imu reference-point assumption; orientation convention and independence unverified; GNSS disabled",
+        "estimate_point": "imu"
+      },
+      "timing": {
+        "streams": {
+          "/odometry/local": {
+            "messages": 599,
+            "start": 1686284028.1539989,
+            "end": 1686284087.950617,
+            "duration_s": 59.79661822319031,
+            "backwards": 0,
+            "same_epoch_revisions": 0,
+            "median_rate_hz": 9.986473761215814,
+            "max_interval_s": 0.10764932632446289
+          },
+          "/odometry/imu": {
+            "messages": 11951,
+            "start": 1686284028.2375417,
+            "end": 1686284087.987538,
+            "duration_s": 59.74999642372131,
+            "backwards": 0,
+            "same_epoch_revisions": 0,
+            "median_rate_hz": 199.99542246805265,
+            "max_interval_s": 0.012667655944824219
+          }
+        },
+        "diagnostics_samples": 598,
+        "processing_ms": {
+          "p50": 35.184819000000005,
+          "p95": 43.6276818,
+          "maximum": 53.237962,
+          "last": 33.832974,
+          "tail_mean": 38.23269135
+        },
+        "state_lag_ms": {
+          "p50": 41.308164500000004,
+          "p95": 58.3934904,
+          "maximum": 81.46739,
+          "last": 32.489777,
+          "tail_mean": 41.3514137
+        },
+        "lidar_queue": {
+          "p50": 0.0,
+          "p95": 0.0,
+          "maximum": 0.0,
+          "last": 0.0,
+          "tail_mean": 0.0
+        },
+        "imu_queue": {
+          "p50": 1.0,
+          "p95": 3.0,
+          "maximum": 13.0,
+          "last": 1.0,
+          "tail_mean": 1.05
+        },
+        "aux_queue": {
+          "p50": 0.0,
+          "p95": 0.0,
+          "maximum": 0.0,
+          "last": 0.0,
+          "tail_mean": 0.0
+        },
+        "final_counters": {
+          "session": "0",
+          "stereo.updates": "0",
+          "stereo.features": "0",
+          "degeneracy.reason": "0",
+          "degeneracy.severe": "0",
+          "degeneracy.degraded": "0",
+          "weak_dimensions": "0",
+          "match_ratio": "0.000000",
+          "residual": "0.000000",
+          "lidar_queue": "0",
+          "imu_queue": "1",
+          "processing_ms": "33.832974",
+          "imu_gap_count": "0",
+          "wheel.accepted": "0",
+          "wheel.rejected": "0",
+          "wheel.late": "0",
+          "wheel.overflow": "0",
+          "gnss.accepted": "0",
+          "gnss.rejected": "0",
+          "gnss.late": "0",
+          "gnss.overflow": "0",
+          "stereo.accepted": "0",
+          "stereo.rejected": "0",
+          "stereo.late": "0",
+          "stereo.overflow": "0",
+          "aux_queue": "0",
+          "state_lag_ms": "32.489777"
+        },
+        "severe_lidar_samples": 0,
+        "geometrically_degraded_samples": 0,
+        "no_sustained_backlog": true
+      }
+    },
+    "fusionportable_60s/stereo_frontend": {
+      "run": {
+        "variant": "stereo_frontend",
+        "playback_exit": 0,
+        "wall_seconds": 61.71114378499988,
+        "peak_rss_kib": 514664,
+        "synthetic": false,
+        "enabled_sensors": [
+          "stereo"
+        ]
+      },
+      "metric_topic": "/odometry/local",
+      "online_position": {
+        "alignment": "SE3",
+        "scale": 1.0,
+        "associated_poses": 598,
+        "association_fraction": 1.0,
+        "duration_seconds": 59.69951033592224,
+        "ate_rmse_m": 0.30054055399192947,
+        "ate_median_m": 0.2826265825124239,
+        "rpe_interval_s": 1.0,
+        "rpe_pairs": 490,
+        "position_only_reference": true,
+        "rpe_translation_rmse_m": null,
+        "rpe_position_displacement_rmse_m": 0.09853233313706479,
+        "rpe_rotation_rmse_deg": null,
+        "reference_source": "Official ugv_parking00 positions; body_imu reference-point assumption; orientation convention and independence unverified; GNSS disabled",
+        "estimate_point": "imu"
+      },
+      "timing": {
+        "streams": {
+          "/odometry/local": {
+            "messages": 598,
+            "start": 1686284028.2511067,
+            "end": 1686284087.950617,
+            "duration_s": 59.69951033592224,
+            "backwards": 0,
+            "same_epoch_revisions": 0,
+            "median_rate_hz": 9.985796151199803,
+            "max_interval_s": 0.10764932632446289
+          },
+          "/odometry/imu": {
+            "messages": 11934,
+            "start": 1686284028.307577,
+            "end": 1686284087.987538,
+            "duration_s": 59.67996120452881,
+            "backwards": 0,
+            "same_epoch_revisions": 0,
+            "median_rate_hz": 199.99542246805265,
+            "max_interval_s": 0.02070331573486328
+          },
+          "/odometry/global": {
+            "messages": 109,
+            "start": 1686284028.8537107,
+            "end": 1686284087.6549637,
+            "duration_s": 58.80125308036804,
+            "backwards": 0,
+            "same_epoch_revisions": 0,
+            "median_rate_hz": 1.998804807077372,
+            "max_interval_s": 1.1011123657226562
+          }
+        },
+        "diagnostics_samples": 597,
+        "processing_ms": {
+          "p50": 68.130278,
+          "p95": 87.316916,
+          "maximum": 169.457712,
+          "last": 88.426852,
+          "tail_mean": 69.00263315
+        },
+        "state_lag_ms": {
+          "p50": 73.326588,
+          "p95": 100.99720959999999,
+          "maximum": 221.513033,
+          "last": 45.661211,
+          "tail_mean": 71.4544536
+        },
+        "lidar_queue": {
+          "p50": 0.0,
+          "p95": 0.0,
+          "maximum": 1.0,
+          "last": 0.0,
+          "tail_mean": 0.0
+        },
+        "imu_queue": {
+          "p50": 1.0,
+          "p95": 3.0,
+          "maximum": 9.0,
+          "last": 1.0,
+          "tail_mean": 1.5
+        },
+        "aux_queue": {
+          "p50": 1.0,
+          "p95": 2.0,
+          "maximum": 7.0,
+          "last": 1.0,
+          "tail_mean": 1.1
+        },
+        "final_counters": {
+          "session": "0",
+          "stereo.updates": "1174",
+          "stereo.features": "130",
+          "degeneracy.reason": "0",
+          "degeneracy.severe": "0",
+          "degeneracy.degraded": "0",
+          "weak_dimensions": "0",
+          "match_ratio": "0.803470",
+          "residual": "0.018113",
+          "lidar_queue": "0",
+          "imu_queue": "1",
+          "processing_ms": "88.426852",
+          "imu_gap_count": "0",
+          "wheel.accepted": "0",
+          "wheel.rejected": "0",
+          "wheel.late": "0",
+          "wheel.overflow": "0",
+          "gnss.accepted": "0",
+          "gnss.rejected": "0",
+          "gnss.late": "0",
+          "gnss.overflow": "0",
+          "stereo.accepted": "1181",
+          "stereo.rejected": "4",
+          "stereo.late": "16",
+          "stereo.overflow": "0",
+          "imu.invalid": "0",
+          "aux_queue": "1",
+          "state_lag_ms": "45.661211",
+          "backend.dropped": "0",
+          "backend.processed": "109",
+          "backend.loops": "0",
+          "backend.wheel_factors": "0",
+          "backend.gnss_factors": "0",
+          "backend.visual_factors": "0"
+        },
+        "severe_lidar_samples": 5,
+        "geometrically_degraded_samples": 0,
+        "no_sustained_backlog": true
+      },
+      "final_optimized_position": {
+        "alignment": "SE3",
+        "scale": 1.0,
+        "associated_poses": 109,
+        "association_fraction": 1.0,
+        "duration_seconds": 58.80125308036804,
+        "ate_rmse_m": 0.3081955778358803,
+        "ate_median_m": 0.27988804173710036,
+        "rpe_interval_s": 1.0,
+        "rpe_pairs": 41,
+        "position_only_reference": true,
+        "rpe_translation_rmse_m": null,
+        "rpe_position_displacement_rmse_m": 0.09209089325491081,
+        "rpe_rotation_rmse_deg": null,
+        "reference_source": "Official ugv_parking00 positions; body_imu reference-point assumption; orientation convention and independence unverified; GNSS disabled",
+        "estimate_point": "imu"
+      }
+    },
+    "fusionportable_60s/wheel_frontend": {
+      "run": {
+        "variant": "wheel_frontend",
+        "playback_exit": 0,
+        "wall_seconds": 61.70652904400049,
+        "peak_rss_kib": 459272,
+        "synthetic": false,
+        "enabled_sensors": [
+          "wheel"
+        ]
+      },
+      "metric_topic": "/odometry/local",
+      "online_position": {
+        "alignment": "SE3",
+        "scale": 1.0,
+        "associated_poses": 599,
+        "association_fraction": 1.0,
+        "duration_seconds": 59.79661822319031,
+        "ate_rmse_m": 0.3076863647040836,
+        "ate_median_m": 0.27938350549022567,
+        "rpe_interval_s": 1.0,
+        "rpe_pairs": 491,
+        "position_only_reference": true,
+        "rpe_translation_rmse_m": null,
+        "rpe_position_displacement_rmse_m": 0.09925804350362,
+        "rpe_rotation_rmse_deg": null,
+        "reference_source": "Official ugv_parking00 positions; body_imu reference-point assumption; orientation convention and independence unverified; GNSS disabled",
+        "estimate_point": "imu"
+      },
+      "timing": {
+        "streams": {
+          "/odometry/local": {
+            "messages": 599,
+            "start": 1686284028.1539989,
+            "end": 1686284087.950617,
+            "duration_s": 59.79661822319031,
+            "backwards": 0,
+            "same_epoch_revisions": 0,
+            "median_rate_hz": 9.986473761215814,
+            "max_interval_s": 0.10764932632446289
+          },
+          "/odometry/imu": {
+            "messages": 11930,
+            "start": 1686284028.3425338,
+            "end": 1686284087.987538,
+            "duration_s": 59.64500427246094,
+            "backwards": 0,
+            "same_epoch_revisions": 0,
+            "median_rate_hz": 199.99542246805265,
+            "max_interval_s": 0.012667655944824219
+          },
+          "/odometry/global": {
+            "messages": 109,
+            "start": 1686284028.7523332,
+            "end": 1686284087.6549637,
+            "duration_s": 58.90263056755066,
+            "backwards": 0,
+            "same_epoch_revisions": 0,
+            "median_rate_hz": 1.9966173260881466,
+            "max_interval_s": 1.0957200527191162
+          }
+        },
+        "diagnostics_samples": 598,
+        "processing_ms": {
+          "p50": 37.348665,
+          "p95": 46.61087979999999,
+          "maximum": 72.023408,
+          "last": 38.682846,
+          "tail_mean": 37.836960649999995
+        },
+        "state_lag_ms": {
+          "p50": 43.588995499999996,
+          "p95": 55.404448849999994,
+          "maximum": 75.455904,
+          "last": 35.240412,
+          "tail_mean": 44.12569995
+        },
+        "lidar_queue": {
+          "p50": 0.0,
+          "p95": 0.0,
+          "maximum": 0.0,
+          "last": 0.0,
+          "tail_mean": 0.0
+        },
+        "imu_queue": {
+          "p50": 1.0,
+          "p95": 3.0,
+          "maximum": 36.0,
+          "last": 1.0,
+          "tail_mean": 1.55
+        },
+        "aux_queue": {
+          "p50": 4.0,
+          "p95": 6.0,
+          "maximum": 24.0,
+          "last": 4.0,
+          "tail_mean": 4.2
+        },
+        "final_counters": {
+          "session": "0",
+          "stereo.updates": "0",
+          "stereo.features": "0",
+          "degeneracy.reason": "0",
+          "degeneracy.severe": "0",
+          "degeneracy.degraded": "0",
+          "weak_dimensions": "0",
+          "match_ratio": "0.802561",
+          "residual": "0.018454",
+          "lidar_queue": "0",
+          "imu_queue": "1",
+          "processing_ms": "38.682846",
+          "imu_gap_count": "0",
+          "wheel.accepted": "5357",
+          "wheel.rejected": "3",
+          "wheel.late": "10",
+          "wheel.overflow": "0",
+          "gnss.accepted": "0",
+          "gnss.rejected": "0",
+          "gnss.late": "0",
+          "gnss.overflow": "0",
+          "stereo.accepted": "0",
+          "stereo.rejected": "0",
+          "stereo.late": "0",
+          "stereo.overflow": "0",
+          "imu.invalid": "0",
+          "aux_queue": "4",
+          "state_lag_ms": "35.240412",
+          "backend.dropped": "0",
+          "backend.processed": "109",
+          "backend.loops": "0",
+          "backend.wheel_factors": "0",
+          "backend.gnss_factors": "0",
+          "backend.visual_factors": "0"
+        },
+        "severe_lidar_samples": 5,
+        "geometrically_degraded_samples": 0,
+        "no_sustained_backlog": true
+      },
+      "final_optimized_position": {
+        "alignment": "SE3",
+        "scale": 1.0,
+        "associated_poses": 109,
+        "association_fraction": 1.0,
+        "duration_seconds": 58.90263056755066,
+        "ate_rmse_m": 0.31580529204329294,
+        "ate_median_m": 0.28448636331492605,
+        "rpe_interval_s": 1.0,
+        "rpe_pairs": 46,
+        "position_only_reference": true,
+        "rpe_translation_rmse_m": null,
+        "rpe_position_displacement_rmse_m": 0.09393510026342165,
+        "rpe_rotation_rmse_deg": null,
+        "reference_source": "Official ugv_parking00 positions; body_imu reference-point assumption; orientation convention and independence unverified; GNSS disabled",
+        "estimate_point": "imu"
+      }
+    }
+  }
+}
