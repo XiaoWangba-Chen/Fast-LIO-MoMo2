@@ -1,4 +1,6 @@
 #include "fast_lio/backend.hpp"
+#include "fast_lio/registration.hpp"
+#include "fast_lio/map_bundle.hpp"
 #include <gtsam/nonlinear/ISAM2.h>
 #include <gtsam/geometry/Pose3.h>
 #include <gtsam/nonlinear/NonlinearFactorGraph.h>
@@ -90,9 +92,6 @@ class StereoFactor:public gtsam::NoiseModelFactor {
     return A.transpose()*r;
   }
 };
-using Descriptor=Eigen::Matrix<double,20,60>;
-Descriptor descriptor(const Cloud& cloud){Descriptor d=Descriptor::Zero();for(const auto& p:cloud){double range=std::hypot(p.x,p.y);if(range>=80||range<1)continue;int ring=std::min(19,int(range/4));int sector=std::min(59,int((std::atan2(p.y,p.x)+M_PI)*60/(2*M_PI)));d(ring,sector)=std::max(d(ring,sector),double(p.z+5));}return d;}
-std::pair<double,int> descriptorDistance(const Descriptor& a,const Descriptor& b){double best=1;int best_shift=0;for(int shift=0;shift<60;++shift){double sum=0;int count=0;for(int j=0;j<60;++j){auto x=a.col(j);auto y=b.col((j+shift)%60);if(x.norm()<1e-6||y.norm()<1e-6)continue;sum+=x.dot(y)/(x.norm()*y.norm());++count;}double distance=count>10?1-sum/count:1;if(distance<best){best=distance;best_shift=shift;}}return {best,best_shift};}
 }
 struct Backend::Impl {
   BackendConfig config;std::function<void(const BackendResult&)> callback;
@@ -228,6 +227,8 @@ void Backend::flush(){std::unique_lock<std::mutex>l(impl_->mutex);impl_->idle.wa
 bool Backend::save(std::string& error){flush();std::lock_guard<std::mutex> graph_lock(impl_->graph_mutex);auto result=snapshot();try{std::filesystem::create_directories(impl_->config.output_directory);std::ofstream out(impl_->config.output_directory+"/trajectory.tum");if(!out)throw std::runtime_error("Cannot open trajectory output");for(auto& pair:result.trajectory){Pose base=pair.second*impl_->config.imu_T_base;Eigen::Quaterniond q(base.linear());const Vec3 p=base.translation();out<<std::fixed<<std::setprecision(9)<<pair.first<<" "<<p.transpose()<<" "<<q.x()<<" "<<q.y()<<" "<<q.z()<<" "<<q.w()<<"\n";}
   Cloud map;for(const auto& k:impl_->keyframes){Cloud transformed;pcl::transformPointCloud(*k.cloud,transformed,impl_->estimate.at<gtsam::Pose3>(k.node).matrix().cast<float>());map+=transformed;}
   if(!map.empty()&&pcl::io::savePCDFileBinary(impl_->config.output_directory+"/map.pcd",map)<0)throw std::runtime_error("PCD write failed");
-  std::ofstream keyframes(impl_->config.output_directory+"/keyframes.csv");keyframes<<"node,timestamp,points\n";for(const auto& k:impl_->keyframes){keyframes<<k.node<<","<<std::setprecision(17)<<impl_->nodes[k.node].time<<","<<k.cloud->size()<<"\n";if(pcl::io::savePCDFileBinary(impl_->config.output_directory+"/keyframe_"+std::to_string(k.node)+".pcd",*k.cloud)<0)throw std::runtime_error("Keyframe write failed");}return true;
+  std::ofstream keyframes(impl_->config.output_directory+"/keyframes.csv");keyframes<<"node,timestamp,points\n";for(const auto& k:impl_->keyframes){keyframes<<k.node<<","<<std::setprecision(17)<<impl_->nodes[k.node].time<<","<<k.cloud->size()<<"\n";if(pcl::io::savePCDFileBinary(impl_->config.output_directory+"/keyframe_"+std::to_string(k.node)+".pcd",*k.cloud)<0)throw std::runtime_error("Keyframe write failed");}
+  std::vector<MapKeyframe> frames;for(const auto& k:impl_->keyframes)frames.push_back({k.node,impl_->nodes[k.node].time,ep(impl_->estimate.at<gtsam::Pose3>(k.node)),k.cloud});
+  saveMapBundle(impl_->config.output_directory+"/map_bundle",frames);return true;
 }catch(const std::exception& e){error=e.what();return false;}}
 }

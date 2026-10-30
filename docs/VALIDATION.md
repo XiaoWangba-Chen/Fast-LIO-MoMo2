@@ -84,4 +84,25 @@ Ubuntu 22.04 / ROS2 Humble / GCC 11 / C++17 / GTSAM 4.2.0；本机 Intel i7-1365
 - 完整路线的双目融合、长时间内存增长、多序列重复运行及统计一致性评测。
 - 参考轨迹坐标约定和独立性核实，以及后端融合精度退化的进一步排查。
 
-LIO 相邻边使用保守膨胀的边际近似，不声称严格独立；视觉状态克隆和结构消元也没有额外声称已通过完整不可观性/NEES 一致性证明。全局关键帧与轨迹随路程增长，在线内存不是固定上限。首版不包含地图加载重定位和跨会话合图。
+LIO 相邻边使用保守膨胀的边际近似，不声称严格独立；视觉状态克隆和结构消元也没有额外声称已通过完整不可观性/NEES 一致性证明。全局关键帧与轨迹随路程增长，在线内存不是固定上限。现已支持新版地图包加载重定位；跨会话合图尚未实现。
+
+
+## 固定地图重定位验证（2026-10-30）
+
+新增地图包、重定位、丢失恢复、重复场景歧义拒绝和线程会话隔离测试后，40 个 C++ 测试全部通过。Python 工具测试执行 7 项，其中 6 项通过、1 项因系统 Python 缺少 rosbags 跳过。现有 ROS 后端、前端、前端故障注入三个 smoke 测试及新增定位端到端 smoke 全部通过。新测试同时检查 late-subscriber 地图接收、base_link 初始位姿、定位前输出抑制及历史地图哈希不变。
+
+真实验证使用已有 FusionPortableV2 `normalized_60s`，关闭轮速、双目和回环，先独立运行建图并导出地图包，再启动新进程回放同一段 bag 做自动定位。定位进程收到 600 帧点云，发布 468 条全局位姿；首次有效全局消息约在 bag 起点后 1.06 s，跟踪阶段未记录配准失败。工作队列替换了 127 个待处理旧扫描，以保持前端不受积压影响。
+
+与本次建图导出的 base_link 轨迹比较，在线定位的位置一致性 RMSE 为 0.0719 m，P95 为 0.1037 m；地图包全部文件哈希在定位前后保持一致。此处没有拟合额外 SE(3) 对齐。这是**同一输入重复回放的一致性检查**，不属于独立采集路线、环境变化或真值精度验收，也没有验证任意姿态恢复。
+
+本地完整证据位于 `results/relocalization_60s/report.json` 和同目录日志；地图包位于 `results/relocalization_60s/export/map_bundle`。复现命令（输出目录必须尚不存在）：
+
+```bash
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+ROS_DOMAIN_ID=91 ROS_LOCALHOST_ONLY=1 /usr/bin/python3 scripts/localization_replay.py \
+  data/fusionportable_v2/normalized_60s --config config/fusionportable_v2.yaml \
+  --output results/relocalization_60s_repeat
+```
+
+仍需不同时间独立采集、显著环境变化、大地图和真实机器人定位验证。地图常驻内存、描述子线性检索，当前没有恒定内存或恒定定位频率保证。

@@ -1,5 +1,7 @@
 #include "fast_lio/runtime.hpp"
 #include "fast_lio/stereo.hpp"
+#include "fast_lio/localization.hpp"
+#include <geometry_msgs/msg/pose_with_covariance_stamped.hpp>
 #include "fast_lio/ros2_support.hpp"
 #include <sensor_msgs/msg/imu.hpp>
 #include <sensor_msgs/msg/image.hpp>
@@ -78,6 +80,7 @@ struct Runtime::Impl {
   std::atomic<double> fast_time{-1};
   size_t max_events=2000;std::atomic<bool> reset_needed{false};uint64_t session=0;
   std::unique_ptr<Backend> backend;BackendConfig backend_config;
+  std::unique_ptr<Localization> localization;bool localization_enabled=false;
   rclcpp::executors::SingleThreadedExecutor executor;std::thread io_thread;
   std::vector<rclcpp::SubscriptionBase::SharedPtr> subscriptions;
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr fast_pub,local_pub,global_pub;
@@ -89,6 +92,12 @@ struct Runtime::Impl {
   explicit Impl(Runtime& owner,rclcpp::Node::SharedPtr node):owner(owner),parameters(node),io(std::make_shared<rclcpp::Node>("fastlio_io",rclcpp::NodeOptions().arguments({"--ros-args","-r","__node:=fastlio_io"}))),side(parseSide(node->declare_parameter<std::string>("fusion.mode","backend"))){
     wheel_enabled=node->declare_parameter<bool>("wheel.enabled",false);gnss_enabled=node->declare_parameter<bool>("gnss.enabled",false);stereo_enabled=node->declare_parameter<bool>("stereo.enabled",false);
     backend_enabled=node->declare_parameter<bool>("backend.enabled",true);
+    localization_enabled=node->declare_parameter<bool>("localization.enabled",false);
+    if(localization_enabled){
+      backend_enabled=false;
+      if(side==Side::Backend&&(wheel_enabled||gnss_enabled||stereo_enabled))throw std::invalid_argument("Localization with auxiliary sensors requires fusion.mode=frontend");
+      if(node->get_parameter("pcd_save.pcd_save_en").as_bool())throw std::invalid_argument("Disable pcd_save in fixed-map localization mode");
+    }
     if(side==Side::Backend&&!backend_enabled&&(wheel_enabled||gnss_enabled||stereo_enabled))throw std::invalid_argument("fusion.mode=backend requires backend.enabled=true when auxiliary sensors are enabled");
     io->set_parameter(rclcpp::Parameter("use_sim_time",node->get_parameter("use_sim_time").as_bool()));
     imu_T_base=extrinsic(node,"extrinsics.imu_T_base");camera.body_T_camera=extrinsic(node,"extrinsics.imu_T_camera");camera_raw=camera.body_T_camera;auto antenna_pose=extrinsic(node,"extrinsics.imu_T_gnss");antenna=antenna_pose.translation();
@@ -142,9 +151,51 @@ struct Runtime::Impl {
     }
     backend_config.enabled=backend_enabled;backend_config.side=side;backend_config.imu_T_base=imu_T_base;backend_config.antenna=antenna;backend_config.nonholonomic=wheel_model.nonholonomic;
     backend_config.loop_enabled=node->declare_parameter<bool>("backend.loop_enabled",true);backend_config.key_distance=node->declare_parameter<double>("backend.key_distance",1.);backend_config.key_angle=node->declare_parameter<double>("backend.key_angle",.2);backend_config.key_seconds=node->declare_parameter<double>("backend.key_seconds",1.);backend_config.output_directory=node->declare_parameter<std::string>("output.directory","/tmp/fastlio-output");
+    if(localization_enabled){
+      LocalizationConfig c;c.map_directory=node->declare_parameter<std::string>("localization.map_directory","");
+      c.voxel=node->declare_parameter<double>("localization.voxel",.3);
+      c.candidates=node->declare_parameter<int>("localization.candidates",5);
+      c.confirmations=node->declare_parameter<int>("localization.confirmations",3);
+      c.failures=node->declare_parameter<int>("localization.failures",5);
+      c.descriptor_threshold=node->declare_parameter<double>("localization.descriptor_threshold",.2);
+      c.submap_radius=node->declare_parameter<double>("localization.submap_radius",60.);
+      c.consistency_translation=node->declare_parameter<double>("localization.consistency_translation",1.);
+      c.consistency_rotation=node->declare_parameter<double>("localization.consistency_rotation",.25);
+      c.maximum_correction_translation=node->declare_parameter<double>("localization.maximum_correction_translation",2.);
+      c.maximum_correction_rotation=node->declare_parameter<double>("localization.maximum_correction_rotation",.35);
+      c.ambiguity_ratio=node->declare_parameter<double>("localization.ambiguity_ratio",1.2);
+      c.ambiguity_distance=node->declare_parameter<double>("localization.ambiguity_distance",3.);
+      c.ambiguity_fitness_margin=node->declare_parameter<double>("localization.ambiguity_fitness_margin",.01);
+      c.registration.correspondence=node->declare_parameter<double>("localization.correspondence",2.);
+      c.registration.fitness=node->declare_parameter<double>("localization.fitness",.15);
+      c.registration.overlap=node->declare_parameter<double>("localization.overlap",.5);
+      c.registration.overlap_distance=node->declare_parameter<double>("localization.overlap_distance",.5);
+      c.registration.minimum_geometry_ratio=node->declare_parameter<double>("localization.minimum_geometry_ratio",1e-4);
+      c.registration.iterations=node->declare_parameter<int>("localization.iterations",60);
+      localization=std::make_unique<Localization>(c,[this](const LocalizationResult& r){
+        if(!r.valid)return;
+        State global=r.local;global.pose=r.map_T_odom*r.local.pose;global.velocity=r.map_T_odom.linear()*r.local.velocity;
+        Cov transport=Cov::Identity();transport.block<3,3>(0,0)=r.map_T_odom.linear();transport.block<3,3>(12,12)=r.map_T_odom.linear();
+        global.covariance=transport*r.local.covariance*transport.transpose();
+        auto message=odometry(global,imu_T_base,"map",global.angular_rate,gyro_measurement_variance);
+        Mat6 P=basePoseCovariance(global.pose,imu_T_base,r.covariance);
+        for(int i=0;i<6;++i)for(int j=0;j<6;++j)message.pose.covariance[6*i+j]=P(i,j);
+        tf->sendTransform(transformMessage(r.map_T_odom,r.local.time,"map","odom"));global_pub->publish(message);
+      });
+      sensor_msgs::msg::PointCloud2 map_message;pcl::toROSMsg(*localization->map(),map_message);map_message.header.frame_id="map";map_message.header.stamp=io->now();map_pub->publish(map_message);
+      subscriptions.push_back(io->create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>("/initialpose",10,[this](geometry_msgs::msg::PoseWithCovarianceStamped::ConstSharedPtr m){
+        try{
+          if(m->header.frame_id!="map")throw std::invalid_argument("initialpose frame_id must be map");
+          const auto& p=m->pose.pose;Eigen::Quaterniond q(p.orientation.w,p.orientation.x,p.orientation.y,p.orientation.z);
+          if(!q.coeffs().allFinite()||std::abs(q.norm()-1)>1e-3)throw std::invalid_argument("initialpose requires a unit quaternion");
+          Pose pose=Pose::Identity();pose.translation()=Vec3(p.position.x,p.position.y,p.position.z);pose.linear()=q.normalized().toRotationMatrix();
+          localization->initialPose(pose*imu_T_base.inverse(),stamp_seconds(m->header.stamp));
+        }catch(const std::exception& e){RCLCPP_WARN(io->get_logger(),"Initial pose rejected: %s",e.what());}
+      }));
+    }
     immutable_parameters=node->add_on_set_parameters_callback([this](const std::vector<rclcpp::Parameter>& updates){
       rcl_interfaces::msg::SetParametersResult result;result.successful=true;
-      for(const auto& p:updates)if(p.get_name()=="fusion.mode"&&(p.get_type()!=rclcpp::ParameterType::PARAMETER_STRING||p.as_string()!=(side==Side::Frontend?"frontend":"backend"))){result.successful=false;result.reason="fusion.mode is immutable; restart the estimator to change it";}
+      for(const auto& p:updates){if(p.get_name().rfind("localization.",0)==0||p.get_name()=="backend.enabled"){result.successful=false;result.reason="Restart required to change localization/backend configuration";}if(p.get_name()=="fusion.mode"&&(p.get_type()!=rclcpp::ParameterType::PARAMETER_STRING||p.as_string()!=(side==Side::Frontend?"frontend":"backend"))){result.successful=false;result.reason="fusion.mode is immutable; restart the estimator to change it";}}
       return result;
     });
     watchdog=io->create_wall_timer(std::chrono::milliseconds(50),[this]{
@@ -155,7 +206,7 @@ struct Runtime::Impl {
     });
     executor.add_node(io);io_thread=std::thread([this]{executor.spin();});
   }
-  ~Impl(){executor.cancel();if(io_thread.joinable())io_thread.join();backend.reset();}
+  ~Impl(){executor.cancel();if(io_thread.joinable())io_thread.join();localization.reset();backend.reset();}
   void enqueue(Auxiliary e,Audit& a){double t=eventTime(e);if(!std::isfinite(t)){++a.rejected;return;}if(t<=last_processed){++a.late;return;}if(events.size()>=max_events){++a.overflow;return;}if(!observed_ids.insert({e.index(),std::llround(t*1e9)}).second){++a.rejected;return;}auto it=std::upper_bound(events.begin(),events.end(),t,[](double t,const Auxiliary& other){return t<eventTime(other);});events.insert(it,std::move(e));}
   void ensureBackend(){if(!backend&&backend_enabled){backend_config.camera=camera;backend=std::make_unique<Backend>(backend_config,[this](const BackendResult& result){
     tf->sendTransform(transformMessage(result.map_T_odom,result.local.time,"map","odom"));State global=result.local;global.pose=result.map_T_odom*global.pose;global.velocity=result.map_T_odom.linear()*global.velocity;
@@ -184,6 +235,7 @@ struct Runtime::Impl {
 };
 Runtime::Runtime(rclcpp::Node::SharedPtr node):impl_(new Impl(*this,node)){
   impl_->save_service=node->create_service<std_srvs::srv::Trigger>("~/save",[this](const std::shared_ptr<std_srvs::srv::Trigger::Request>,std::shared_ptr<std_srvs::srv::Trigger::Response> response){
+    if(impl_->localization){response->success=false;response->message="Fixed-map localization does not overwrite the loaded map";return;}
     if(!impl_->backend){response->success=false;response->message="No backend state available";return;}
     response->success=impl_->backend->save(response->message);if(response->success)response->message=impl_->backend_config.output_directory;
   });
@@ -192,7 +244,7 @@ Runtime::~Runtime()=default;
 bool Runtime::frontend()const{return impl_->side==Side::Frontend;}
 bool Runtime::reset_requested()const{return impl_->reset_needed;}
 void Runtime::request_reset(){impl_->reset_needed=true;}
-void Runtime::reset(const Cov& P){std::lock_guard<std::mutex>l(impl_->mutex);++impl_->session;impl_->events.clear();impl_->observed_ids.clear();impl_->left_images.clear();impl_->right_images.clear();impl_->geodesy.reset();impl_->alignment.reset();impl_->tracker.reset();impl_->last_processed=-1;impl_->last_imu=-1;impl_->last_imu_wall=0;impl_->fast_time=-1;filter.reset(P);degeneracy.reset();propagator.reset();if(impl_->backend)impl_->backend->reset(impl_->session);impl_->reset_needed=false;}
+void Runtime::reset(const Cov& P){std::lock_guard<std::mutex>l(impl_->mutex);++impl_->session;impl_->events.clear();impl_->observed_ids.clear();impl_->left_images.clear();impl_->right_images.clear();impl_->geodesy.reset();impl_->alignment.reset();impl_->tracker.reset();impl_->last_processed=-1;impl_->last_imu=-1;impl_->last_imu_wall=0;impl_->fast_time=-1;filter.reset(P);degeneracy.reset();propagator.reset();if(impl_->backend)impl_->backend->reset(impl_->session);if(impl_->localization)impl_->localization->reset(impl_->session);impl_->reset_needed=false;}
 void Runtime::noise(const Noise& n,double scale){propagator.configure(n,scale);}
 void Runtime::process(double end,const std::function<void(double)>& predict,const std::function<State()>& get,const std::function<void(const Correction&)>& apply,const std::function<Vec3()>& angular){
   std::deque<Auxiliary> ready;{std::lock_guard<std::mutex>l(impl_->mutex);while(!impl_->events.empty()&&eventTime(impl_->events.front())<=end){ready.push_back(std::move(impl_->events.front()));impl_->events.pop_front();}}
@@ -227,7 +279,8 @@ void Runtime::process(double end,const std::function<void(double)>& predict,cons
 }
 void Runtime::corrected(const State& state,const Cloud::ConstPtr& cloud){
   propagator.correct(state);impl_->local_pub->publish(odometry(state,impl_->imu_T_base,"odom",state.angular_rate,impl_->gyro_measurement_variance));
-  impl_->ensureBackend();if(impl_->backend){BackendEvent event;event.state=state;event.cloud=cloud;event.degeneracy=degeneracy.status();event.session=impl_->session;impl_->backend->submit(std::move(event));}
+  if(impl_->localization)impl_->localization->submit(state,cloud,impl_->session);
+  impl_->ensureBackend();if(impl_->backend){BackendEvent event;event.state=state;event.cloud=degeneracy.status().severe?Cloud::ConstPtr():cloud;event.degeneracy=degeneracy.status();event.session=impl_->session;impl_->backend->submit(std::move(event));}
 }
 void Runtime::diagnostics(const DegeneracyStatus& s,size_t lidar_queue,size_t imu_queue,double ms){
   diagnostic_msgs::msg::DiagnosticArray msg;msg.header.stamp=impl_->io->now();diagnostic_msgs::msg::DiagnosticStatus d;d.name="fastlio/estimation";d.hardware_id="fastlio";d.level=s.severe?2:s.degraded?1:0;d.message=s.severe?"lidar matching failed":s.degraded?"geometry degraded":"tracking";
@@ -236,6 +289,7 @@ void Runtime::diagnostics(const DegeneracyStatus& s,size_t lidar_queue,size_t im
   {std::lock_guard<std::mutex>l(impl_->mutex);for(auto pair:{std::make_pair("wheel",impl_->wheel_audit),std::make_pair("gnss",impl_->gnss_audit),std::make_pair("stereo",impl_->stereo_audit)}){add(std::string(pair.first)+".accepted",pair.second.accepted);add(std::string(pair.first)+".rejected",pair.second.rejected);add(std::string(pair.first)+".late",pair.second.late);add(std::string(pair.first)+".overflow",pair.second.overflow);}add("imu.invalid",impl_->invalid_imu);add("aux_queue",impl_->events.size());add("state_lag_ms",impl_->last_processed<0?0.:std::max(0.,1000*(impl_->io->now().seconds()-impl_->last_processed)));}
   if(impl_->fast_time>=0&&impl_->io->get_clock()->get_clock_type()==RCL_ROS_TIME&&impl_->io->now().seconds()-impl_->fast_time>propagator.max_gap){d.level=2;d.message="IMU missing";}
   if(impl_->backend){auto b=impl_->backend->snapshot();add("backend.dropped",b.dropped);add("backend.processed",b.processed);add("backend.loops",b.loops);add("backend.wheel_factors",b.wheel_factors);add("backend.gnss_factors",b.gnss_factors);add("backend.visual_factors",b.visual_factors);if(!b.error.empty()){d.level=2;d.message=b.error;}}
+  if(impl_->localization){auto r=impl_->localization->snapshot();diagnostic_msgs::msg::DiagnosticStatus l;l.name="fastlio/localization";l.hardware_id="fastlio";l.level=r.valid?0:1;l.message=phaseName(r.phase);if(!r.error.empty()){l.level=2;l.message+=" : "+r.error;}auto value=[&](const std::string& key,auto v){diagnostic_msgs::msg::KeyValue k;k.key=key;k.value=std::to_string(v);l.values.push_back(k);};value("fitness",r.fitness);value("overlap",r.overlap);value("confirmations",r.confirmations);value("failures",r.failures);value("dropped",r.dropped);value("session",r.session);value("valid",r.valid);msg.status.push_back(l);}
   msg.status.push_back(d);impl_->diagnostics_pub->publish(msg);
 }
 void Runtime::finish(){if(impl_->backend){std::string error;if(!impl_->backend->save(error))RCLCPP_ERROR(impl_->io->get_logger(),"Export failed: %s",error.c_str());}}

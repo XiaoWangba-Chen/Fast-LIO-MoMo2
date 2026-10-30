@@ -58,7 +58,7 @@ ros2 launch fast_lio slam.launch.py
 - 真实 GNSS 融合（官方天线杆臂标定缺失，当前真实实验关闭 GNSS）、Livox 可选编译分支和真实机器人硬件验证。
 - ENWIDE 真实退化场景（本次下载返回 HTTP 429）、完整路线双目融合、多序列重复运行、长时间内存与统计一致性评估。
 
-首版不包含地图加载重定位及跨会话合图。完整测试证据、七组消融及实现近似边界见 [验收记录](docs/VALIDATION.md) 和 [架构说明](docs/ARCHITECTURE.md)。
+现已支持新版关键帧地图包的加载重定位；跨会话合图尚未实现。完整测试证据、七组消融及实现近似边界见 [验收记录](docs/VALIDATION.md) 和 [架构说明](docs/ARCHITECTURE.md)。
 
 以下保留上游论文、作者与 ROS1 使用说明作为历史参考；当前分支请使用上面的 ROS2 文档。
 
@@ -339,3 +339,8 @@ The main structure of this UAV is 3d printed (Aluminum or PLA), the .stl file wi
 ## 6.Acknowledgments
 
 Thanks for LOAM(J. Zhang and S. Singh. LOAM: Lidar Odometry and Mapping in Real-time), [Livox_Mapping](https://github.com/Livox-SDK/livox_mapping), [LINS](https://github.com/ChaoqinRobotics/LINS---LiDAR-inertial-SLAM) and [Loam_Livox](https://github.com/hku-mars/loam_livox).
+
+
+### ROS2 固定地图重定位
+
+本仓库的 ROS2 实现支持新版关键帧地图包的自动全局重定位、固定地图持续定位、丢失后重检索和 RViz 初始位姿。运行方法见 [docs/RUNNING.md](docs/RUNNING.md#自动重定位与固定地图定位)，估计边界见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#跨会话固定地图定位)。

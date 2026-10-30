@@ -1066,7 +1066,7 @@ int run_mapping(int argc, char** argv)
 
             /******* Publish odometry *******/
             fastlio::Cloud::Ptr key_cloud(new fastlio::Cloud);
-            if(!fusion_runtime->degeneracy.status().severe) {
+            {
                 key_cloud->reserve(feats_down_body->size());
                 for(const auto& p:feats_down_body->points){fastlio::Vec3 q=state_point.offset_R_L_I*fastlio::Vec3(p.x,p.y,p.z)+state_point.offset_T_L_I;pcl::PointXYZI point;point.x=q.x();point.y=q.y();point.z=q.z();point.intensity=p.intensity;key_cloud->push_back(point);}
             }

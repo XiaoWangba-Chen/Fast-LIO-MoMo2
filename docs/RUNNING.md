@@ -121,7 +121,7 @@ IMU 缺测超过默认 100 ms 后，不继续发布无效递推，诊断会报�
 ros2 service call /fastlio_mapping/save std_srvs/srv/Trigger '{}'
 ```
 
-也会在正常 SIGINT/SIGTERM 退出时导出。位置由 `output.directory` 指定，默认 `/tmp/fastlio-output`：`trajectory.tum` 是优化后的 base_link 位姿，`map.pcd` 是全局地图，`keyframes.csv` 和 `keyframe_<node>.pcd` 保存关键帧索引与 IMU 系点云。未实现跨会话合图和地图加载重定位。
+也会在正常 SIGINT/SIGTERM 退出时导出。位置由 `output.directory` 指定，默认 `/tmp/fastlio-output`：`trajectory.tum` 是优化后的 base_link 位姿，`map.pcd` 是全局地图，`keyframes.csv` 和 `keyframe_<node>.pcd` 保存关键帧索引与 IMU 系点云。同时导出 `map_bundle/manifest.txt` 和 generation 目录，用于跨次运行的自动重定位。跨会话合图不支持。
 
 ## 验证
 
@@ -133,3 +133,41 @@ ROS_DOMAIN_ID=89 ROS_LOCALHOST_ONLY=1 python3 scripts/ros_smoke.py --mode fronte
 ```
 
 测试检查模式不可动态切换、互斥融合、200 Hz 消息输出、延迟、TF、协方差和地图导出。合成测试不作为真实数据精度结论。真实数据访问状态和工具见 [DATASETS.md](DATASETS.md)，已完成与未完成的验收见 [VALIDATION.md](VALIDATION.md)。
+
+
+## 自动重定位与固定地图定位
+
+先按正常 SLAM 模式建图，调用上述保存服务。新版地图包默认位于 `/tmp/fastlio-output/map_bundle`。旧版单个 map.pcd 不包含自动检索所需的关键帧位姿，需要使用新版程序重新建图导出。
+
+```bash
+cd /home/cxt/SB/FAST_LIO
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+ros2 launch fast_lio localization.launch.py \
+  config:=/绝对路径/雷达配置.yaml \
+  map_directory:=/tmp/fastlio-output/map_bundle \
+  use_sim_time:=false
+```
+
+雷达配置必须与实际硬件匹配；外参和建图时一致。bag 回放设置 `use_sim_time:=true` 并使用 `ros2 bag play --clock`。默认不依赖相机、轮速或 GNSS；需要辅助融合时设置 `fusion.mode: frontend`，定位模式不运行因子图后端。
+
+定位参数在 `config/localization.yaml`，可用 `localization_config:=/绝对路径/参数.yaml` 替换。默认检索 5 个候选、连续 3 帧确认，连续 5 次配准失败后重新搜索。距离单位为米，角度为弧度；`fitness` 为重叠内点的均方欧氏距离，单位 m²。`minimum_geometry_ratio` 对平移和按 10 m 特征尺度归一化的转动信息检查可观测性。
+
+自动检索要求建图和定位的重力方向基本一致；主要恢复位置与航向，不支持任意翻转姿态。重复走廊、平面场景、较小重叠或明显环境变化可能无法确认定位。默认 `submap_radius=60 m`，大范围雷达需按有效视野调整。检索对关键帧线性扫描，地图常驻内存，尚无大地图索引与按需加载。
+
+在 RViz 设置 Fixed Frame 为 `map`，使用 **2D Pose Estimate** 可给出 map 中的 base_link 大致位姿；输入 `/initialpose` 为 `geometry_msgs/msg/PoseWithCovarianceStamped`，frame_id 必须为 `map`，姿态四元数必须有效。位置会转换为 IMU 位姿后经 ICP 验证，而非直接信任。带时间戳的初始位姿须与下一帧相差不超过 0.5 秒，零时间戳表示下一帧；建议静止操作。消息中的协方差不作为融合观测使用。
+
+查看 `/diagnostics` 的 `fastlio/localization`：
+
+- `searching`：全局检索中；`confirming`：等待连续一致结果。
+- `tracking`：固定地图跟踪；`lost`：跟踪丢失并重新检索。
+- `valid`、`fitness`、`overlap`、`confirmations`、`failures`、`dropped` 报告有效性、匹配质量和处理情况。
+
+确认前及失败扫描不发布新的 `/odometry/global` 或 map→odom；局部 `/odometry/local`、`/odometry/imu` 继续输出。消费者应检查消息时间戳和诊断，不能把 TF 缓存中的旧变换当作当前定位。固定历史地图发布到 transient-local `/map/global`，后加入的 RViz 订阅也能收到；定位模式不发布 `/path/optimized`。保存服务在定位模式明确拒绝覆盖地图，退出也不导出历史地图。
+
+```bash
+# 与编译及其他 smoke 测试分开执行
+ROS_DOMAIN_ID=90 ROS_LOCALHOST_ONLY=1 /usr/bin/python3 scripts/localization_smoke.py
+```
+
+此测试执行合成场景的建图、保存、进程重启、自动定位、手动 base_link 初始位姿，以及固定地图哈希校验；不代表真实数据精度。

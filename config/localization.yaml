@@ -1,0 +1,28 @@
+/**:
+  ros__parameters:
+    localization:
+      enabled: true
+      map_directory: ""
+      voxel: 0.3
+      candidates: 5
+      descriptor_threshold: 0.2
+      confirmations: 3
+      failures: 5
+      submap_radius: 60.0
+      consistency_translation: 1.0
+      consistency_rotation: 0.25
+      maximum_correction_translation: 2.0
+      maximum_correction_rotation: 0.35
+      ambiguity_ratio: 1.2
+      ambiguity_distance: 3.0
+      ambiguity_fitness_margin: 0.01
+      correspondence: 2.0
+      fitness: 0.15
+      overlap: 0.5
+      overlap_distance: 0.5
+      minimum_geometry_ratio: 0.0001
+      iterations: 60
+    backend:
+      enabled: false
+    pcd_save:
+      pcd_save_en: false
